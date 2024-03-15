@@ -12,7 +12,6 @@ resource "azurerm_app_service_environment_v3" "this" {
   allow_new_private_endpoint_connections = var.allow_new_private_endpoint_connections
   dedicated_host_count                   = var.dedicated_host_count
   internal_load_balancing_mode           = var.internal_load_balancing_mode
-  location                               = coalesce(var.location, local.resource_group_location)
   remote_debugging_enabled               = var.remote_debugging_enabled
   tags                                   = var.tags
   zone_redundant                         = var.zone_redundant
@@ -32,14 +31,14 @@ resource "azurerm_management_lock" "this" {
 
   lock_level = var.lock.kind
   name       = coalesce(var.lock.name, "lock-${var.name}")
-  scope      = azurerm_TODO_resource.this.id
+  scope      = azurerm_app_service_environment_v3.this.id
 }
 
 resource "azurerm_role_assignment" "this" {
   for_each = var.role_assignments
 
   principal_id                           = each.value.principal_id
-  scope                                  = azurerm_TODO_resource.this.id
+  scope                                  = azurerm_app_service_environment_v3.this.id
   condition                              = each.value.condition
   condition_version                      = each.value.condition_version
   delegated_managed_identity_resource_id = each.value.delegated_managed_identity_resource_id
