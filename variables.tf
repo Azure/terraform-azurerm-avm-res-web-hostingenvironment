@@ -118,8 +118,8 @@ variable "internal_load_balancing_mode" {
   description = " Specifies which endpoints to serve internally in the Virtual Network for the App Service Environment."
 
   validation {
-    condition     = can(regex("None|Web|Publishing|Web,Publishing", var.internal_load_balancing_mode))
-    error_message = "Possibile values are 'None', 'Web', 'Publishing' and the combined value of 'Web,Publishing'."
+    condition     = can(regex("None|Web, Publishing", var.internal_load_balancing_mode))
+    error_message = "Possibile values are 'None' or the combined value of 'Web, Publishing'."
   }
 }
 
