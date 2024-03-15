@@ -5,11 +5,25 @@ data "azurerm_resource_group" "parent" {
   name = var.resource_group_name
 }
 
-resource "azurerm_TODO_the_resource_for_this_module" "this" {
-  name                = var.name # calling code must supply the name
-  resource_group_name = var.resource_group_name
-  location            = coalesce(var.location, local.resource_group_location)
-  # etc
+resource "azurerm_app_service_environment_v3" "this" {
+  name                                   = var.name # calling code must supply the name
+  resource_group_name                    = var.resource_group_name
+  subnet_id                              = var.virtual_network_subnet_id
+  allow_new_private_endpoint_connections = var.allow_new_private_endpoint_connections
+  dedicated_host_count                   = var.dedicated_host_count
+  internal_load_balancing_mode           = var.internal_load_balancing_mode
+  location                               = coalesce(var.location, local.resource_group_location)
+  remote_debugging_enabled               = var.remote_debugging_enabled
+  tags                                   = var.tags
+  zone_redundant                         = var.zone_redundant
+
+  dynamic "cluster_setting" {
+    for_each = var.cluster_setting
+    content {
+      name  = cluster_setting.name
+      value = cluster_setting.value
+    }
+  }
 }
 
 # required AVM resources interfaces
