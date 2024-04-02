@@ -49,14 +49,14 @@ resource "azurerm_resource_group" "this" {
   name     = module.naming.resource_group.name_unique
 }
 
-resource "azurerm_virtual_network" "example-virtual-network" {
+resource "azurerm_virtual_network" "example_virtual_network" {
   address_space       = ["10.0.0.0/16"]
   location            = azurerm_resource_group.this.location
   name                = "example-vnet"
   resource_group_name = azurerm_resource_group.this.name
 }
 
-resource "azurerm_subnet" "example-subnet" {
+resource "azurerm_subnet" "example_subnet" {
   address_prefixes     = ["10.0.1.0/24"]
   name                 = "example-subnet"
   resource_group_name  = azurerm_resource_group.this.name
@@ -111,8 +111,8 @@ The following providers are used by this module:
 The following resources are used by this module:
 
 - [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) (resource)
-- [azurerm_subnet.example-subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) (resource)
-- [azurerm_virtual_network.example-virtual-network](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) (resource)
+- [azurerm_subnet.example_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) (resource)
+- [azurerm_virtual_network.example_virtual_network](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) (resource)
 - [random_integer.region_index](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer) (resource)
 
 <!-- markdownlint-disable MD013 -->

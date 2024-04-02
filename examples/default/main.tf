@@ -43,14 +43,14 @@ resource "azurerm_resource_group" "this" {
   name     = module.naming.resource_group.name_unique
 }
 
-resource "azurerm_virtual_network" "example-virtual-network" {
+resource "azurerm_virtual_network" "example_virtual_network" {
   address_space       = ["10.0.0.0/16"]
   location            = azurerm_resource_group.this.location
   name                = "example-vnet"
   resource_group_name = azurerm_resource_group.this.name
 }
 
-resource "azurerm_subnet" "example-subnet" {
+resource "azurerm_subnet" "example_subnet" {
   address_prefixes     = ["10.0.1.0/24"]
   name                 = "example-subnet"
   resource_group_name  = azurerm_resource_group.this.name
