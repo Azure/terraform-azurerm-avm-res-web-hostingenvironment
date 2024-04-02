@@ -52,13 +52,13 @@ resource "azurerm_resource_group" "this" {
 resource "azurerm_virtual_network" "example_virtual_network" {
   address_space       = ["10.0.0.0/16"]
   location            = azurerm_resource_group.this.location
-  name                = "example-vnet"
+  name                = "example_virtual_network"
   resource_group_name = azurerm_resource_group.this.name
 }
 
 resource "azurerm_subnet" "example_subnet" {
   address_prefixes     = ["10.0.1.0/24"]
-  name                 = "example-subnet"
+  name                 = "example_subnet"
   resource_group_name  = azurerm_resource_group.this.name
   virtual_network_name = azurerm_virtual_network.example-virtual-network.name
 
@@ -83,7 +83,7 @@ module "test" {
   enable_telemetry    = var.enable_telemetry # see variables.tf
   name                = module.naming.app_service_environment.name_unique
   resource_group_name = azurerm_resource_group.this.name
-  subnet_id           = azurerm_subnet.example-subnet.id
+  subnet_id           = azurerm_subnet.example_subnet.id
 }
 ```
 
