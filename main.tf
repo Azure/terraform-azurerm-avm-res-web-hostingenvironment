@@ -8,7 +8,7 @@ data "azurerm_resource_group" "parent" {
 resource "azurerm_app_service_environment_v3" "this" {
   name                                   = var.name # calling code must supply the name
   resource_group_name                    = var.resource_group_name
-  subnet_id                              = var.virtual_network_subnet_id
+  subnet_id                              = var.subnet_id
   allow_new_private_endpoint_connections = var.allow_new_private_endpoint_connections
   dedicated_host_count                   = var.dedicated_host_count
   internal_load_balancing_mode           = var.internal_load_balancing_mode

@@ -56,6 +56,12 @@ Description: The resource group where the resources will be deployed.
 
 Type: `string`
 
+### <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id)
+
+Description: The ID of the Subnet which the App Service Environment should be connected to.
+
+Type: `string`
+
 ## Optional Inputs
 
 The following input variables are optional (have default values):
@@ -242,14 +248,6 @@ Description: The map of tags to be applied to the resource
 Type: `map(any)`
 
 Default: `{}`
-
-### <a name="input_virtual_network_subnet_id"></a> [virtual\_network\_subnet\_id](#input\_virtual\_network\_subnet\_id)
-
-Description: The ID of the Subnet which the App Service Environment should be connected to.
-
-Type: `string`
-
-Default: `null`
 
 ### <a name="input_zone_redundant"></a> [zone\_redundant](#input\_zone\_redundant)
 

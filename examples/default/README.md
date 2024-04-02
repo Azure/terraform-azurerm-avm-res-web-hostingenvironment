@@ -49,6 +49,13 @@ resource "azurerm_resource_group" "this" {
   name     = module.naming.resource_group.name_unique
 }
 
+resource "azurerm_subnet" "example" {
+  address_prefixes     = ["10.0.1.0/24"]
+  name                 = "example-subnet"
+  resource_group_name  = azurerm_resource_group.this.name
+  virtual_network_name = azurerm_virtual_network.example.name
+}
+
 # This is the module call
 # Do not specify location here due to the randomization above.
 # Leaving location as `null` will cause the module to use the resource group location
@@ -60,6 +67,7 @@ module "test" {
   enable_telemetry    = var.enable_telemetry # see variables.tf
   name                = "web-hostingenvironment"
   resource_group_name = azurerm_resource_group.this.name
+  subnet_id           = azurerm_subnet.example.id
 }
 ```
 
@@ -87,12 +95,19 @@ The following providers are used by this module:
 The following resources are used by this module:
 
 - [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) (resource)
+- [azurerm_subnet.example](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) (resource)
 - [random_integer.region_index](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer) (resource)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
 
-No required inputs.
+The following input variables are required:
+
+### <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id)
+
+Description: The ID of the Subnet which the App Service Environment should be connected to.
+
+Type: `string`
 
 ## Optional Inputs
 

@@ -14,6 +14,11 @@ variable "resource_group_name" {
   description = "The resource group where the resources will be deployed."
 }
 
+variable "subnet_id" {
+  type        = string
+  description = "The ID of the Subnet which the App Service Environment should be connected to."
+}
+
 variable "allow_new_private_endpoint_connections" {
   type        = bool
   default     = null
@@ -187,12 +192,6 @@ variable "tags" {
   type        = map(any)
   default     = {}
   description = "The map of tags to be applied to the resource"
-}
-
-variable "virtual_network_subnet_id" {
-  type        = string
-  default     = null
-  description = "The ID of the Subnet which the App Service Environment should be connected to."
 }
 
 variable "zone_redundant" {
