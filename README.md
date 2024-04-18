@@ -91,7 +91,7 @@ Default: `{}`
 
 ### <a name="input_customer_managed_key"></a> [customer\_managed\_key](#input\_customer\_managed\_key)
 
-Description: required AVM interfaces remove only if not supported by the resource tflint-ignore: terraform\_unused\_declarations
+Description: Customer managed keys that should be associated with the resource.
 
 Type:
 

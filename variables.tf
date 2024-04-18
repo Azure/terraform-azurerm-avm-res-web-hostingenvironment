@@ -46,7 +46,8 @@ variable "customer_managed_key" {
       resource_id = string
     }), null)
   })
-  default = null
+  default     = null
+  description = "Customer managed keys that should be associated with the resource."
 }
 
 variable "dedicated_host_count" {
