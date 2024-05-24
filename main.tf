@@ -1,4 +1,3 @@
-# TODO: insert resources here.
 data "azurerm_resource_group" "parent" {
   count = var.location == null ? 1 : 0
 
