@@ -4,10 +4,6 @@ data "azurerm_resource_group" "parent" {
   name = var.resource_group_name
 }
 
-data "azurerm_location" "region" {
-  location = coalesce(var.location, local.resource_group_location)
-}
-
 resource "azurerm_app_service_environment_v3" "this" {
   name                                   = var.name # calling code must supply the name
   resource_group_name                    = var.resource_group_name
