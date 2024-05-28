@@ -1,10 +1,3 @@
-# TODO: insert resources here.
-data "azurerm_resource_group" "parent" {
-  count = var.location == null ? 1 : 0
-
-  name = var.resource_group_name
-}
-
 resource "azurerm_app_service_environment_v3" "this" {
   name                                   = var.name # calling code must supply the name
   resource_group_name                    = var.resource_group_name
