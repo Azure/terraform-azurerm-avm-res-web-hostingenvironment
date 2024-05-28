@@ -1,7 +1,3 @@
-data "azurerm_resource_group" "parent" {
-  name = var.resource_group_name
-}
-
 resource "azurerm_app_service_environment_v3" "this" {
   name                                   = var.name # calling code must supply the name
   resource_group_name                    = var.resource_group_name
