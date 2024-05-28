@@ -1,3 +1,9 @@
+variable "location" {
+  type        = string
+  description = "Azure region where the resource should be deployed.  If null, the location will be inferred from the resource group location."
+  nullable    = false
+}
+
 variable "name" {
   type        = string
   description = "The name of the this resource."
@@ -80,12 +86,6 @@ variable "internal_load_balancing_mode" {
     condition     = can(regex("None|Web, Publishing", var.internal_load_balancing_mode))
     error_message = "Possibile values are 'None' or the combined value of 'Web, Publishing'."
   }
-}
-
-variable "location" {
-  type        = string
-  default     = null
-  description = "Azure region where the resource should be deployed.  If null, the location will be inferred from the resource group location."
 }
 
 variable "lock" {
