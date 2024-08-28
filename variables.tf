@@ -156,6 +156,6 @@ variable "tags" {
 
 variable "zone_redundant" {
   type        = bool
-  default     = null
-  description = "Specifies if the App Service Environment is zone redundant. Defaults to false. Set to true to deploy the ASEv3 with availability zones supported. Zonal ASEs can be deployed in some regions"
+  default     = true
+  description = "Specifies if the App Service Environment is zone redundant. Defaults to true. Zonal ASEs can only be deployed in some regions"
 }
