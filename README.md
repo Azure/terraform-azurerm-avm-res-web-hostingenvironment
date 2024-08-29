@@ -13,19 +13,21 @@ This is the web hosting environment (App Service Environment) resource module fo
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.3.0)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.5)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.71.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 3.71)
 
-- <a name="requirement_random"></a> [random](#requirement\_random) (>= 3.5.0)
+- <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
+
+- <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.5)
 
 ## Providers
 
 The following providers are used by this module:
 
-- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (>= 3.71.0)
+- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (~> 3.71)
 
-- <a name="provider_random"></a> [random](#provider\_random) (>= 3.5.0)
+- <a name="provider_random"></a> [random](#provider\_random) (~> 3.5)
 
 ## Resources
 
@@ -215,11 +217,11 @@ Default: `null`
 
 ### <a name="input_zone_redundant"></a> [zone\_redundant](#input\_zone\_redundant)
 
-Description: Specifies if the App Service Environment is zone redundant. Defaults to false. Set to true to deploy the ASEv3 with availability zones supported. Zonal ASEs can be deployed in some regions
+Description: Specifies if the App Service Environment is zone redundant. Defaults to true. Zonal ASEs can only be deployed in some regions
 
 Type: `bool`
 
-Default: `null`
+Default: `true`
 
 ## Outputs
 
