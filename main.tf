@@ -11,6 +11,7 @@ resource "azurerm_app_service_environment_v3" "this" {
 
   dynamic "cluster_setting" {
     for_each = var.cluster_setting
+
     content {
       name  = cluster_setting.name
       value = cluster_setting.value
