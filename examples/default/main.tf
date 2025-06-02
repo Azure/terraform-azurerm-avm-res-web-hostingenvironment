@@ -47,6 +47,12 @@ resource "azurerm_resource_group" "this" {
   name     = module.naming.resource_group.name_unique
 }
 
+resource "azurerm_log_analytics_workspace" "this" {
+  location            = azurerm_resource_group.this.location
+  name                = module.naming.log_analytics_workspace.name_unique
+  resource_group_name = azurerm_resource_group.this.name
+}
+
 resource "azurerm_virtual_network" "example_virtual_network" {
   address_space       = ["10.0.0.0/16"]
   location            = azurerm_resource_group.this.location
@@ -76,10 +82,18 @@ resource "azurerm_subnet" "example_subnet" {
 # with a data source.
 module "test" {
   source = "../../"
-  # source             = "Azure/avm-<res/ptn>-<name>/azurerm"
-  # ...
-  enable_telemetry    = var.enable_telemetry # see variables.tf
+
   name                = module.naming.app_service_environment.name_unique
   resource_group_name = azurerm_resource_group.this.name
   subnet_id           = azurerm_subnet.example_subnet.id
+  diagnostic_settings = {
+    sendToLogAnalytics = {
+      name                           = "sendToLogAnalytics"
+      workspace_resource_id          = azurerm_log_analytics_workspace.this.id
+      log_analytics_destination_type = "Dedicated"
+    }
+  }
+  # source             = "Azure/avm-<res/ptn>-<name>/azurerm"
+  # ...
+  enable_telemetry = var.enable_telemetry # see variables.tf
 }
