@@ -57,6 +57,10 @@ module "naming" {
   version = "0.4.2"
 }
 
+locals {
+  location = local.locations[random_integer.region_index.result]
+}
+
 # This is required for resource modules
 resource "azurerm_resource_group" "this" {
   location = local.location
