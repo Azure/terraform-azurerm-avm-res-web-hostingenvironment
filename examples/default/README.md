@@ -31,27 +31,39 @@ provider "azurerm" {
 
 ## Section to provide a random Azure region for the resource group
 # This allows us to randomize the region for the resource group.
-module "regions" {
-  source  = "Azure/regions/azurerm"
-  version = ">= 0.3.0"
+locals {
+  locations = [
+    "eastus",
+    "eastus2",
+    "westus2",
+    "centralus",
+    "westeurope",
+    "northeurope",
+    "southeastasia",
+    "japaneast",
+  ]
 }
-
 # This allows us to randomize the region for the resource group.
 resource "random_integer" "region_index" {
-  max = length(module.regions.regions) - 1
+  max = length(local.locations) - 1
   min = 0
 }
+
 ## End of section to provide a random Azure region for the resource group
 
 # This ensures we have unique CAF compliant names for our resources.
 module "naming" {
   source  = "Azure/naming/azurerm"
-  version = ">= 0.3.0"
+  version = "0.4.2"
+}
+
+locals {
+  location = local.locations[random_integer.region_index.result]
 }
 
 # This is required for resource modules
 resource "azurerm_resource_group" "this" {
-  location = module.regions.regions[random_integer.region_index.result].name
+  location = local.location
   name     = module.naming.resource_group.name_unique
 }
 
@@ -159,13 +171,7 @@ The following Modules are called:
 
 Source: Azure/naming/azurerm
 
-Version: >= 0.3.0
-
-### <a name="module_regions"></a> [regions](#module\_regions)
-
-Source: Azure/regions/azurerm
-
-Version: >= 0.3.0
+Version: 0.4.2
 
 ### <a name="module_test"></a> [test](#module\_test)
 

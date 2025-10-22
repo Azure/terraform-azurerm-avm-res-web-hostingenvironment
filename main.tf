@@ -13,8 +13,8 @@ resource "azurerm_app_service_environment_v3" "this" {
     for_each = var.cluster_setting
 
     content {
-      name  = cluster_setting.name
-      value = cluster_setting.value
+      name  = cluster_setting.value.name
+      value = cluster_setting.value.value
     }
   }
 }
