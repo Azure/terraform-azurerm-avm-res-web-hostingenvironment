@@ -34,6 +34,22 @@ variable "remote_debug_enabled" {
   description = "Property to enable and disable Remote Debug on ASEV3."
 }
 
+variable "retry" {
+  type = object({
+    error_message_regex  = optional(list(string), null)
+    interval_seconds     = optional(number, null)
+    max_interval_seconds = optional(number, null)
+  })
+  default     = null
+  description = <<DESCRIPTION
+  Retry configuration for transient errors. The following properties can be specified:
+
+  - `error_message_regex` - (Optional) A list of regular expressions to match against error messages.
+  - `interval_seconds` - (Optional) The initial interval in seconds between retries.
+  - `max_interval_seconds` - (Optional) The maximum interval in seconds between retries.
+  DESCRIPTION
+}
+
 variable "timeouts" {
   type = object({
     create = optional(string, "30m")

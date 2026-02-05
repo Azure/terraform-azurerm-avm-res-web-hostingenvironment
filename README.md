@@ -292,7 +292,6 @@ Description:   Retry configuration for transient errors. The following propertie
   - `error_message_regex` - (Optional) A list of regular expressions to match against error messages. If any match, the operation will be retried.
   - `interval_seconds` - (Optional) The initial interval in seconds between retries.
   - `max_interval_seconds` - (Optional) The maximum interval in seconds between retries.
-  - `count` - (Optional) The maximum number of retries.
 
 Type:
 
@@ -301,7 +300,6 @@ object({
     error_message_regex  = optional(list(string), null)
     interval_seconds     = optional(number, null)
     max_interval_seconds = optional(number, null)
-    count                = optional(number, null)
   })
 ```
 
@@ -338,14 +336,6 @@ map(object({
 ```
 
 Default: `{}`
-
-### <a name="input_subnet_name"></a> [subnet\_name](#input\_subnet\_name)
-
-Description: Subnet name within the Virtual Network. This is extracted from subnet\_id if not provided.
-
-Type: `string`
-
-Default: `null`
 
 ### <a name="input_tags"></a> [tags](#input\_tags)
 

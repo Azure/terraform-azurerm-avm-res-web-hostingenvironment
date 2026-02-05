@@ -1,6 +1,6 @@
 locals {
-  # Extract virtual network ID from subnet_id
-  subnet_id_parts    = split("/", var.subnet_id)
-  virtual_network_id = join("/", slice(local.subnet_id_parts, 0, 9))
+  # Parse subnet_id using azapi provider function
+  parsed_subnet_id   = provider::azapi::parse_resource_id("Microsoft.Network/virtualNetworks/subnets", var.subnet_id)
+  subnet_name        = local.parsed_subnet_id.name
+  virtual_network_id = local.parsed_subnet_id.parent_id
 }
-

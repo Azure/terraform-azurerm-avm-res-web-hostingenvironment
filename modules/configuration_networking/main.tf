@@ -18,6 +18,11 @@ resource "azapi_resource" "this" {
     "properties.linuxOutboundIpAddresses",
     "properties.windowsOutboundIpAddresses"
   ]
+  retry = var.retry != null ? {
+    error_message_regex  = var.retry.error_message_regex
+    interval_seconds     = var.retry.interval_seconds
+    max_interval_seconds = var.retry.max_interval_seconds
+  } : null
   schema_validation_enabled = true
 
   timeouts {

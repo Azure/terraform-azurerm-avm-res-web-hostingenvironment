@@ -81,6 +81,26 @@ Type: `bool`
 
 Default: `null`
 
+### <a name="input_retry"></a> [retry](#input\_retry)
+
+Description:   Retry configuration for transient errors. The following properties can be specified:
+
+  - `error_message_regex` - (Optional) A list of regular expressions to match against error messages.
+  - `interval_seconds` - (Optional) The initial interval in seconds between retries.
+  - `max_interval_seconds` - (Optional) The maximum interval in seconds between retries.
+
+Type:
+
+```hcl
+object({
+    error_message_regex  = optional(list(string), null)
+    interval_seconds     = optional(number, null)
+    max_interval_seconds = optional(number, null)
+  })
+```
+
+Default: `null`
+
 ### <a name="input_timeouts"></a> [timeouts](#input\_timeouts)
 
 Description: Timeouts for resource operations.

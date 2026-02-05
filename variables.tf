@@ -18,11 +18,21 @@ variable "parent_id" {
   type        = string
   description = "The resource ID of the resource group where the App Service Environment will be deployed."
   nullable    = false
+
+  validation {
+    condition     = can(provider::azapi::parse_resource_id("Microsoft.Resources/resourceGroups", var.parent_id))
+    error_message = "The parent_id must be a valid Azure resource group resource ID."
+  }
 }
 
 variable "subnet_id" {
   type        = string
   description = "The ID of the Subnet which the App Service Environment should be connected to. The subnet must be delegated to Microsoft.Web/hostingEnvironments."
+
+  validation {
+    condition     = can(provider::azapi::parse_resource_id("Microsoft.Network/virtualNetworks/subnets", var.subnet_id))
+    error_message = "The subnet_id must be a valid Azure subnet resource ID."
+  }
 }
 
 variable "allow_new_private_endpoint_connections" {
@@ -242,7 +252,6 @@ variable "retry" {
     error_message_regex  = optional(list(string), null)
     interval_seconds     = optional(number, null)
     max_interval_seconds = optional(number, null)
-    count                = optional(number, null)
   })
   default     = null
   description = <<DESCRIPTION
@@ -251,7 +260,6 @@ variable "retry" {
   - `error_message_regex` - (Optional) A list of regular expressions to match against error messages. If any match, the operation will be retried.
   - `interval_seconds` - (Optional) The initial interval in seconds between retries.
   - `max_interval_seconds` - (Optional) The maximum interval in seconds between retries.
-  - `count` - (Optional) The maximum number of retries.
   DESCRIPTION
 }
 
@@ -282,12 +290,6 @@ variable "role_assignments" {
   > Note: only set `skip_service_principal_aad_check` to true if you are assigning a role to a service principal.
   DESCRIPTION
   nullable    = false
-}
-
-variable "subnet_name" {
-  type        = string
-  default     = null
-  description = "Subnet name within the Virtual Network. This is extracted from subnet_id if not provided."
 }
 
 variable "tags" {

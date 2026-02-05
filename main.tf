@@ -40,7 +40,7 @@ resource "azapi_resource" "this" {
       userWhitelistedIpRanges = var.user_whitelisted_ip_ranges
       virtualNetwork = {
         id     = local.virtual_network_id
-        subnet = var.subnet_name
+        subnet = local.subnet_name
       }
       zoneRedundant = var.zone_redundant
     }
@@ -186,7 +186,7 @@ moved {
 
 moved {
   from = azurerm_management_lock.this
-  to   = azapi_resource.lock
+  to   = azapi_resource.lock[0]
 }
 
 moved {
