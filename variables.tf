@@ -14,9 +14,10 @@ variable "name" {
   }
 }
 
-variable "resource_group_name" {
+variable "parent_id" {
   type        = string
-  description = "The resource group where the resources will be deployed."
+  description = "The resource ID of the resource group where the App Service Environment will be deployed."
+  nullable    = false
 }
 
 variable "subnet_id" {
@@ -234,6 +235,24 @@ variable "remote_debug_enabled" {
   type        = bool
   default     = null
   description = "Property to enable and disable Remote Debug on ASEV3."
+}
+
+variable "retry" {
+  type = object({
+    error_message_regex  = optional(list(string), null)
+    interval_seconds     = optional(number, null)
+    max_interval_seconds = optional(number, null)
+    count                = optional(number, null)
+  })
+  default     = null
+  description = <<DESCRIPTION
+  Retry configuration for transient errors. The following properties can be specified:
+
+  - `error_message_regex` - (Optional) A list of regular expressions to match against error messages. If any match, the operation will be retried.
+  - `interval_seconds` - (Optional) The initial interval in seconds between retries.
+  - `max_interval_seconds` - (Optional) The maximum interval in seconds between retries.
+  - `count` - (Optional) The maximum number of retries.
+  DESCRIPTION
 }
 
 variable "role_assignments" {

@@ -52,9 +52,9 @@ Description: The name of this resource.
 
 Type: `string`
 
-### <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name)
+### <a name="input_parent_id"></a> [parent\_id](#input\_parent\_id)
 
-Description: The resource group where the resources will be deployed.
+Description: The resource ID of the resource group where the App Service Environment will be deployed.
 
 Type: `string`
 
@@ -282,6 +282,28 @@ Default: `{}`
 Description: Property to enable and disable Remote Debug on ASEV3.
 
 Type: `bool`
+
+Default: `null`
+
+### <a name="input_retry"></a> [retry](#input\_retry)
+
+Description:   Retry configuration for transient errors. The following properties can be specified:
+
+  - `error_message_regex` - (Optional) A list of regular expressions to match against error messages. If any match, the operation will be retried.
+  - `interval_seconds` - (Optional) The initial interval in seconds between retries.
+  - `max_interval_seconds` - (Optional) The maximum interval in seconds between retries.
+  - `count` - (Optional) The maximum number of retries.
+
+Type:
+
+```hcl
+object({
+    error_message_regex  = optional(list(string), null)
+    interval_seconds     = optional(number, null)
+    max_interval_seconds = optional(number, null)
+    count                = optional(number, null)
+  })
+```
 
 Default: `null`
 

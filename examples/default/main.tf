@@ -114,10 +114,10 @@ resource "azapi_resource" "subnet" {
 module "test" {
   source = "../../"
 
-  location            = azapi_resource.resource_group.location
-  name                = module.naming.app_service_environment.name_unique
-  resource_group_name = azapi_resource.resource_group.name
-  subnet_id           = azapi_resource.subnet.id
+  location  = azapi_resource.resource_group.location
+  name      = module.naming.app_service_environment.name_unique
+  parent_id = azapi_resource.resource_group.id
+  subnet_id = azapi_resource.subnet.id
   diagnostic_settings = {
     sendToLogAnalytics = {
       name                           = "sendToLogAnalytics"

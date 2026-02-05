@@ -2,7 +2,7 @@
 resource "azapi_resource" "this" {
   location  = var.location
   name      = var.name
-  parent_id = "/subscriptions/${local.subscription_id}/resourceGroups/${var.resource_group_name}"
+  parent_id = var.parent_id
   type      = "Microsoft.Web/hostingEnvironments@2024-04-01"
   body = {
     kind = "ASEV3"
@@ -55,6 +55,11 @@ resource "azapi_resource" "this" {
     "properties.networkingConfiguration.properties.linuxOutboundIpAddresses",
     "properties.networkingConfiguration.properties.windowsOutboundIpAddresses"
   ]
+  retry = var.retry != null ? {
+    error_message_regex  = var.retry.error_message_regex
+    interval_seconds     = var.retry.interval_seconds
+    max_interval_seconds = var.retry.max_interval_seconds
+  } : null
   schema_validation_enabled = true
   tags                      = var.tags
   update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
@@ -92,7 +97,12 @@ resource "azapi_resource" "lock" {
   delete_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   read_headers           = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   response_export_values = []
-  update_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  retry = var.retry != null ? {
+    error_message_regex  = var.retry.error_message_regex
+    interval_seconds     = var.retry.interval_seconds
+    max_interval_seconds = var.retry.max_interval_seconds
+  } : null
+  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.create
@@ -114,7 +124,12 @@ resource "azapi_resource" "role_assignment" {
   delete_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   read_headers           = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   response_export_values = []
-  update_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  retry = var.retry != null ? {
+    error_message_regex  = var.retry.error_message_regex
+    interval_seconds     = var.retry.interval_seconds
+    max_interval_seconds = var.retry.max_interval_seconds
+  } : null
+  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.create
@@ -136,7 +151,12 @@ resource "azapi_resource" "diagnostic_setting" {
   delete_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   read_headers           = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   response_export_values = []
-  update_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  retry = var.retry != null ? {
+    error_message_regex  = var.retry.error_message_regex
+    interval_seconds     = var.retry.interval_seconds
+    max_interval_seconds = var.retry.max_interval_seconds
+  } : null
+  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.create
