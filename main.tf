@@ -5,7 +5,7 @@ resource "azapi_resource" "this" {
   parent_id = "/subscriptions/${local.subscription_id}/resourceGroups/${var.resource_group_name}"
   type      = "Microsoft.Web/hostingEnvironments@2024-04-01"
   body = {
-    kind = var.kind
+    kind = "ASEV3"
     properties = {
       clusterSettings = var.cluster_settings != null ? [
         for setting in var.cluster_settings : {
@@ -125,33 +125,4 @@ module "private_endpoint_connection" {
   name                                  = coalesce(each.value.name, each.key)
   ip_addresses                          = each.value.ip_addresses
   private_link_service_connection_state = each.value.private_link_service_connection_state
-}
-
-# Multi-Role Pool (Front-end Pool) submodule - primarily for ASEv1/v2
-module "multi_role_pool" {
-  source   = "./modules/multi_role_pool"
-  for_each = var.multi_role_pools
-
-  hosting_environment_id = azapi_resource.this.id
-  compute_mode           = each.value.compute_mode
-  kind                   = each.value.kind
-  sku                    = each.value.sku
-  worker_count           = each.value.worker_count
-  worker_size            = each.value.worker_size
-  worker_size_id         = each.value.worker_size_id
-}
-
-# Worker Pool submodule - primarily for ASEv1/v2
-module "worker_pool" {
-  source   = "./modules/worker_pool"
-  for_each = var.worker_pools
-
-  hosting_environment_id = azapi_resource.this.id
-  name                   = coalesce(each.value.name, each.key)
-  compute_mode           = each.value.compute_mode
-  kind                   = each.value.kind
-  sku                    = each.value.sku
-  worker_count           = each.value.worker_count
-  worker_size            = each.value.worker_size
-  worker_size_id         = each.value.worker_size_id
 }

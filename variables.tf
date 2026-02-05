@@ -187,12 +187,6 @@ variable "ipssl_address_count" {
   description = "Number of IP SSL addresses reserved for the App Service Environment."
 }
 
-variable "kind" {
-  type        = string
-  default     = "ASEV3"
-  description = "Kind of resource. Can be 'ASEV3' for App Service Environment v3."
-}
-
 variable "lock" {
   type = object({
     kind = string
@@ -210,48 +204,6 @@ variable "lock" {
     condition     = var.lock != null ? contains(["CanNotDelete", "ReadOnly"], var.lock.kind) : true
     error_message = "Lock kind must be either `\"CanNotDelete\"` or `\"ReadOnly\"`."
   }
-}
-
-variable "multi_role_pools" {
-  type = map(object({
-    compute_mode   = optional(string, null)
-    kind           = optional(string, null)
-    worker_count   = optional(number, null)
-    worker_size    = optional(string, null)
-    worker_size_id = optional(number, null)
-    sku = optional(object({
-      capabilities = optional(list(object({
-        name   = optional(string, null)
-        reason = optional(string, null)
-        value  = optional(string, null)
-      })), null)
-      capacity  = optional(number, null)
-      family    = optional(string, null)
-      locations = optional(list(string), null)
-      name      = optional(string, null)
-      size      = optional(string, null)
-      sku_capacity = optional(object({
-        default         = optional(number, null)
-        elastic_maximum = optional(number, null)
-        maximum         = optional(number, null)
-        minimum         = optional(number, null)
-        scale_type      = optional(string, null)
-      }), null)
-      tier = optional(string, null)
-    }), null)
-  }))
-  default     = {}
-  description = <<DESCRIPTION
-  A map of multi-role pools (front-end pools) to configure for the App Service Environment. This is primarily used for ASEv1/v2.
-
-  - `compute_mode` - (Optional) Shared or dedicated app hosting. Possible values are 'Dedicated', 'Dynamic', or 'Shared'.
-  - `kind` - (Optional) Kind of resource.
-  - `worker_count` - (Optional) Number of instances in the front-end pool.
-  - `worker_size` - (Optional) VM size of the front-end pool instances.
-  - `worker_size_id` - (Optional) Worker size ID for referencing this worker pool.
-  - `sku` - (Optional) SKU configuration for scaling.
-  DESCRIPTION
-  nullable    = false
 }
 
 variable "multi_size" {
@@ -346,50 +298,6 @@ variable "user_whitelisted_ip_ranges" {
   type        = list(string)
   default     = null
   description = "User added IP ranges to whitelist on ASE database."
-}
-
-variable "worker_pools" {
-  type = map(object({
-    name           = optional(string, null)
-    compute_mode   = optional(string, null)
-    kind           = optional(string, null)
-    worker_count   = optional(number, null)
-    worker_size    = optional(string, null)
-    worker_size_id = optional(number, null)
-    sku = optional(object({
-      capabilities = optional(list(object({
-        name   = optional(string, null)
-        reason = optional(string, null)
-        value  = optional(string, null)
-      })), null)
-      capacity  = optional(number, null)
-      family    = optional(string, null)
-      locations = optional(list(string), null)
-      name      = optional(string, null)
-      size      = optional(string, null)
-      sku_capacity = optional(object({
-        default         = optional(number, null)
-        elastic_maximum = optional(number, null)
-        maximum         = optional(number, null)
-        minimum         = optional(number, null)
-        scale_type      = optional(string, null)
-      }), null)
-      tier = optional(string, null)
-    }), null)
-  }))
-  default     = {}
-  description = <<DESCRIPTION
-  A map of worker pools to create for the App Service Environment. This is primarily used for ASEv1/v2.
-
-  - `name` - (Optional) The name of the worker pool. Typically 0, 1, or 2.
-  - `compute_mode` - (Optional) Shared or dedicated app hosting. Possible values are 'Dedicated', 'Dynamic', or 'Shared'.
-  - `kind` - (Optional) Kind of resource.
-  - `worker_count` - (Optional) Number of instances in the worker pool.
-  - `worker_size` - (Optional) VM size of the worker pool instances.
-  - `worker_size_id` - (Optional) Worker size ID for referencing this worker pool.
-  - `sku` - (Optional) SKU configuration for scaling.
-  DESCRIPTION
-  nullable    = false
 }
 
 variable "zone_redundant" {
