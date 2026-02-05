@@ -3,7 +3,7 @@ resource "azapi_resource" "this" {
   location  = var.location
   name      = var.name
   parent_id = var.parent_id
-  type      = "Microsoft.Web/hostingEnvironments@2024-04-01"
+  type      = "Microsoft.Web/hostingEnvironments@2025-03-01"
   body = {
     kind = "ASEV3"
     properties = {
@@ -39,8 +39,7 @@ resource "azapi_resource" "this" {
       upgradePreference       = var.upgrade_preference
       userWhitelistedIpRanges = var.user_whitelisted_ip_ranges
       virtualNetwork = {
-        id     = local.virtual_network_id
-        subnet = local.subnet_name
+        id = var.subnet_id
       }
       zoneRedundant = var.zone_redundant
     }

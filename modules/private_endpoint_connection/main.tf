@@ -2,7 +2,7 @@
 resource "azapi_resource" "this" {
   name      = var.name
   parent_id = var.hosting_environment_id
-  type      = "Microsoft.Web/hostingEnvironments/privateEndpointConnections@2024-04-01"
+  type      = "Microsoft.Web/hostingEnvironments/privateEndpointConnections@2025-03-01"
   body = {
     properties = {
       ipAddresses = var.ip_addresses

@@ -2,7 +2,7 @@
 resource "azapi_resource" "this" {
   name      = "customdnssuffix"
   parent_id = var.hosting_environment_id
-  type      = "Microsoft.Web/hostingEnvironments/configurations@2024-04-01"
+  type      = "Microsoft.Web/hostingEnvironments/configurations@2025-03-01"
   body = {
     kind = var.kind
     properties = {
