@@ -268,6 +268,11 @@ Description:   A map of private endpoint connections to create. The map key is d
     - `actions_required` - (Optional) Actions required for the connection.
     - `description` - (Optional) A description of the connection.
     - `status` - (Optional) The status of the connection. Defaults to 'Approved'.
+  - `timeouts` - (Optional) Timeouts for the private endpoint connection operations.
+    - `create` - (Optional) Timeout for create operations. Defaults to '30m'.
+    - `delete` - (Optional) Timeout for delete operations. Defaults to '30m'.
+    - `read` - (Optional) Timeout for read operations. Defaults to '5m'.
+    - `update` - (Optional) Timeout for update operations. Defaults to '30m'.
 
 Type:
 
@@ -280,6 +285,12 @@ map(object({
       description      = optional(string, null)
       status           = optional(string, "Approved")
     }), {})
+    timeouts = optional(object({
+      create = optional(string, "30m")
+      delete = optional(string, "30m")
+      read   = optional(string, "5m")
+      update = optional(string, "30m")
+    }), {})
   }))
 ```
 
@@ -290,6 +301,30 @@ Default: `{}`
 Description: Property to enable and disable Remote Debug on ASEV3.
 
 Type: `bool`
+
+Default: `null`
+
+### <a name="input_retry"></a> [retry](#input\_retry)
+
+Description:   Retry configuration for transient errors. If not specified, no retries will be attempted.
+
+  - `error_message_regex` - (Optional) A list of regular expressions to match against error messages. If any match, the operation will be retried.
+  - `interval_seconds` - (Optional) The initial interval in seconds between retries. Defaults to 10.
+  - `max_interval_seconds` - (Optional) The maximum interval in seconds between retries. Defaults to 180.
+  - `multiplier` - (Optional) The multiplier for exponential backoff. Defaults to 1.5.
+  - `randomization_factor` - (Optional) The randomization factor for jitter. Defaults to 0.5.
+
+Type:
+
+```hcl
+object({
+    error_message_regex  = optional(list(string), null)
+    interval_seconds     = optional(number, 10)
+    max_interval_seconds = optional(number, 180)
+    multiplier           = optional(number, 1.5)
+    randomization_factor = optional(number, 0.5)
+  })
+```
 
 Default: `null`
 
@@ -340,6 +375,28 @@ Description: (Optional) Tags of the resource.
 Type: `map(string)`
 
 Default: `null`
+
+### <a name="input_timeouts"></a> [timeouts](#input\_timeouts)
+
+Description:   Timeouts for resource operations. App Service Environments can take a long time to create and update.
+
+  - `create` - (Optional) The timeout for create operations. Defaults to '6h'.
+  - `delete` - (Optional) The timeout for delete operations. Defaults to '6h'.
+  - `read` - (Optional) The timeout for read operations. Defaults to '5m'.
+  - `update` - (Optional) The timeout for update operations. Defaults to '6h'.
+
+Type:
+
+```hcl
+object({
+    create = optional(string, "6h")
+    delete = optional(string, "6h")
+    read   = optional(string, "5m")
+    update = optional(string, "6h")
+  })
+```
+
+Default: `{}`
 
 ### <a name="input_upgrade_preference"></a> [upgrade\_preference](#input\_upgrade\_preference)
 

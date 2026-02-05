@@ -59,11 +59,22 @@ resource "azapi_resource" "this" {
   tags                      = var.tags
   update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
+  dynamic "retry" {
+    for_each = var.retry != null ? [var.retry] : []
+
+    content {
+      error_message_regex  = retry.value.error_message_regex
+      interval_seconds     = retry.value.interval_seconds
+      max_interval_seconds = retry.value.max_interval_seconds
+      multiplier           = retry.value.multiplier
+      randomization_factor = retry.value.randomization_factor
+    }
+  }
   timeouts {
-    create = "6h"
-    delete = "6h"
-    read   = "5m"
-    update = "6h"
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
   }
 }
 
@@ -93,6 +104,24 @@ resource "azapi_resource" "lock" {
   read_headers           = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   response_export_values = []
   update_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+
+  dynamic "retry" {
+    for_each = var.retry != null ? [var.retry] : []
+
+    content {
+      error_message_regex  = retry.value.error_message_regex
+      interval_seconds     = retry.value.interval_seconds
+      max_interval_seconds = retry.value.max_interval_seconds
+      multiplier           = retry.value.multiplier
+      randomization_factor = retry.value.randomization_factor
+    }
+  }
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
 }
 
 # Role Assignments using AzAPI
@@ -108,6 +137,24 @@ resource "azapi_resource" "role_assignment" {
   read_headers           = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   response_export_values = []
   update_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+
+  dynamic "retry" {
+    for_each = var.retry != null ? [var.retry] : []
+
+    content {
+      error_message_regex  = retry.value.error_message_regex
+      interval_seconds     = retry.value.interval_seconds
+      max_interval_seconds = retry.value.max_interval_seconds
+      multiplier           = retry.value.multiplier
+      randomization_factor = retry.value.randomization_factor
+    }
+  }
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
 }
 
 # Diagnostic Settings using AzAPI
@@ -123,6 +170,24 @@ resource "azapi_resource" "diagnostic_setting" {
   read_headers           = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   response_export_values = []
   update_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+
+  dynamic "retry" {
+    for_each = var.retry != null ? [var.retry] : []
+
+    content {
+      error_message_regex  = retry.value.error_message_regex
+      interval_seconds     = retry.value.interval_seconds
+      max_interval_seconds = retry.value.max_interval_seconds
+      multiplier           = retry.value.multiplier
+      randomization_factor = retry.value.randomization_factor
+    }
+  }
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
 }
 
 # Private Endpoint Connections submodule
@@ -134,6 +199,8 @@ module "private_endpoint_connection" {
   name                                  = coalesce(each.value.name, each.key)
   ip_addresses                          = each.value.ip_addresses
   private_link_service_connection_state = each.value.private_link_service_connection_state
+  retry                                 = var.retry
+  timeouts                              = each.value.timeouts
 }
 
 # Moved blocks for migration from azurerm provider to azapi provider
