@@ -33,13 +33,6 @@ output "private_endpoint_connections" {
   value       = module.private_endpoint_connection
 }
 
-# Module owners should include the full resource via a 'resource' output
-# https://azure.github.io/Azure-Verified-Modules/specs/terraform/#id-tffr2---category-outputs---additional-terraform-outputs
-output "resource" {
-  description = "The full resource object for the App Service Environment."
-  value       = azapi_resource.this
-}
-
 output "resource_id" {
   description = "The resource ID of the App Service Environment."
   value       = azapi_resource.this.id

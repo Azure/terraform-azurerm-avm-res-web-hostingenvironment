@@ -126,3 +126,24 @@ module "private_endpoint_connection" {
   ip_addresses                          = each.value.ip_addresses
   private_link_service_connection_state = each.value.private_link_service_connection_state
 }
+
+# Moved blocks for migration from azurerm provider to azapi provider
+moved {
+  from = azurerm_app_service_environment_v3.this
+  to   = azapi_resource.this
+}
+
+moved {
+  from = azurerm_management_lock.this
+  to   = azapi_resource.lock
+}
+
+moved {
+  from = azurerm_role_assignment.this
+  to   = azapi_resource.role_assignment
+}
+
+moved {
+  from = azurerm_monitor_diagnostic_setting.this
+  to   = azapi_resource.diagnostic_setting
+}
