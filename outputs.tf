@@ -30,7 +30,13 @@ output "name" {
 
 output "private_endpoint_connections" {
   description = "The private endpoint connections created for the App Service Environment."
-  value       = module.private_endpoint_connection
+  value = {
+    for k, v in module.private_endpoint_connection : k => {
+      name               = v.name
+      resource_id        = v.resource_id
+      provisioning_state = v.provisioning_state
+    }
+  }
 }
 
 output "resource_id" {

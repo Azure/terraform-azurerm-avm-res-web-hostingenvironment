@@ -12,7 +12,12 @@ resource "azapi_resource" "this" {
       remoteDebugEnabled                 = var.remote_debug_enabled
     }
   }
-  response_export_values    = ["*"]
+  response_export_values = [
+    "properties.externalInboundIpAddresses",
+    "properties.internalInboundIpAddresses",
+    "properties.linuxOutboundIpAddresses",
+    "properties.windowsOutboundIpAddresses"
+  ]
   schema_validation_enabled = true
 
   timeouts {

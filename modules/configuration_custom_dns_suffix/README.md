@@ -84,10 +84,6 @@ Description: The provisioning details of the custom DNS suffix configuration.
 
 Description: The provisioning state of the custom DNS suffix configuration.
 
-### <a name="output_resource"></a> [resource](#output\_resource)
-
-Description: The full resource object for the custom DNS suffix configuration.
-
 ### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 
 Description: The resource ID of the custom DNS suffix configuration.

@@ -86,10 +86,6 @@ Description: The name of the private endpoint connection.
 
 Description: The provisioning state of the private endpoint connection.
 
-### <a name="output_resource"></a> [resource](#output\_resource)
-
-Description: The full resource object for the private endpoint connection.
-
 ### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 
 Description: The resource ID of the private endpoint connection.

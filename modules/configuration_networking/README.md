@@ -101,10 +101,6 @@ Description: The Linux outbound IP addresses.
 
 Description: The name of the networking configuration.
 
-### <a name="output_resource"></a> [resource](#output\_resource)
-
-Description: The full resource object for the networking configuration.
-
 ### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 
 Description: The resource ID of the networking configuration.

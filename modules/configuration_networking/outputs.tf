@@ -18,11 +18,6 @@ output "name" {
   value       = azapi_resource.this.name
 }
 
-output "resource" {
-  description = "The full resource object for the networking configuration."
-  value       = azapi_resource.this
-}
-
 output "resource_id" {
   description = "The resource ID of the networking configuration."
   value       = azapi_resource.this.id

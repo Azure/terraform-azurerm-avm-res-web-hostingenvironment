@@ -45,10 +45,16 @@ resource "azapi_resource" "this" {
       zoneRedundant = var.zone_redundant
     }
   }
-  create_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  delete_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  read_headers              = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  response_export_values    = ["*"]
+  create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  response_export_values = [
+    "properties.dnsSuffix",
+    "properties.networkingConfiguration.properties.externalInboundIpAddresses",
+    "properties.networkingConfiguration.properties.internalInboundIpAddresses",
+    "properties.networkingConfiguration.properties.linuxOutboundIpAddresses",
+    "properties.networkingConfiguration.properties.windowsOutboundIpAddresses"
+  ]
   schema_validation_enabled = true
   tags                      = var.tags
   update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
@@ -78,42 +84,45 @@ module "avm_interfaces" {
 resource "azapi_resource" "lock" {
   count = var.lock != null ? 1 : 0
 
-  name           = module.avm_interfaces.lock_azapi.name
-  parent_id      = azapi_resource.this.id
-  type           = module.avm_interfaces.lock_azapi.type
-  body           = module.avm_interfaces.lock_azapi.body
-  create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  name                   = module.avm_interfaces.lock_azapi.name
+  parent_id              = azapi_resource.this.id
+  type                   = module.avm_interfaces.lock_azapi.type
+  body                   = module.avm_interfaces.lock_azapi.body
+  create_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  delete_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  read_headers           = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  response_export_values = []
+  update_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 }
 
 # Role Assignments using AzAPI
 resource "azapi_resource" "role_assignment" {
   for_each = module.avm_interfaces.role_assignments_azapi
 
-  name           = each.value.name
-  parent_id      = azapi_resource.this.id
-  type           = each.value.type
-  body           = each.value.body
-  create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  name                   = each.value.name
+  parent_id              = azapi_resource.this.id
+  type                   = each.value.type
+  body                   = each.value.body
+  create_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  delete_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  read_headers           = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  response_export_values = []
+  update_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 }
 
 # Diagnostic Settings using AzAPI
 resource "azapi_resource" "diagnostic_setting" {
   for_each = module.avm_interfaces.diagnostic_settings_azapi
 
-  name           = each.value.name
-  parent_id      = azapi_resource.this.id
-  type           = each.value.type
-  body           = each.value.body
-  create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  name                   = each.value.name
+  parent_id              = azapi_resource.this.id
+  type                   = each.value.type
+  body                   = each.value.body
+  create_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  delete_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  read_headers           = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  response_export_values = []
+  update_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 }
 
 # Private Endpoint Connections submodule

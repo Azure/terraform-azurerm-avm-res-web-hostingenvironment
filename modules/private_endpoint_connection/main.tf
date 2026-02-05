@@ -13,7 +13,7 @@ resource "azapi_resource" "this" {
       }
     }
   }
-  response_export_values    = ["*"]
+  response_export_values    = ["properties.provisioningState"]
   schema_validation_enabled = true
 
   timeouts {

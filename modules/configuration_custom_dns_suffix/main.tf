@@ -11,7 +11,10 @@ resource "azapi_resource" "this" {
       keyVaultReferenceIdentity = var.key_vault_reference_identity
     }
   }
-  response_export_values    = ["*"]
+  response_export_values = [
+    "properties.provisioningState",
+    "properties.provisioningDetails"
+  ]
   schema_validation_enabled = true
 
   timeouts {
