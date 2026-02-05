@@ -285,30 +285,6 @@ Type: `bool`
 
 Default: `null`
 
-### <a name="input_retry"></a> [retry](#input\_retry)
-
-Description:   Retry configuration for transient errors. If not specified, no retries will be attempted.
-
-  - `error_message_regex` - (Optional) A list of regular expressions to match against error messages. If any match, the operation will be retried.
-  - `interval_seconds` - (Optional) The initial interval in seconds between retries. Defaults to 10.
-  - `max_interval_seconds` - (Optional) The maximum interval in seconds between retries. Defaults to 180.
-  - `multiplier` - (Optional) The multiplier for exponential backoff. Defaults to 1.5.
-  - `randomization_factor` - (Optional) The randomization factor for jitter. Defaults to 0.5.
-
-Type:
-
-```hcl
-object({
-    error_message_regex  = optional(list(string), null)
-    interval_seconds     = optional(number, 10)
-    max_interval_seconds = optional(number, 180)
-    multiplier           = optional(number, 1.5)
-    randomization_factor = optional(number, 0.5)
-  })
-```
-
-Default: `null`
-
 ### <a name="input_role_assignments"></a> [role\_assignments](#input\_role\_assignments)
 
 Description:   A map of role assignments to create on the App Service Environment. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.

@@ -30,18 +30,6 @@ variable "private_link_service_connection_state" {
   DESCRIPTION
 }
 
-variable "retry" {
-  type = object({
-    error_message_regex  = optional(list(string), null)
-    interval_seconds     = optional(number, 10)
-    max_interval_seconds = optional(number, 180)
-    multiplier           = optional(number, 1.5)
-    randomization_factor = optional(number, 0.5)
-  })
-  default     = null
-  description = "Retry configuration for transient errors."
-}
-
 variable "timeouts" {
   type = object({
     create = optional(string, "30m")

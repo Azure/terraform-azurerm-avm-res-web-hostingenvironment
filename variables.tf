@@ -236,26 +236,6 @@ variable "remote_debug_enabled" {
   description = "Property to enable and disable Remote Debug on ASEV3."
 }
 
-variable "retry" {
-  type = object({
-    error_message_regex  = optional(list(string), null)
-    interval_seconds     = optional(number, 10)
-    max_interval_seconds = optional(number, 180)
-    multiplier           = optional(number, 1.5)
-    randomization_factor = optional(number, 0.5)
-  })
-  default     = null
-  description = <<DESCRIPTION
-  Retry configuration for transient errors. If not specified, no retries will be attempted.
-
-  - `error_message_regex` - (Optional) A list of regular expressions to match against error messages. If any match, the operation will be retried.
-  - `interval_seconds` - (Optional) The initial interval in seconds between retries. Defaults to 10.
-  - `max_interval_seconds` - (Optional) The maximum interval in seconds between retries. Defaults to 180.
-  - `multiplier` - (Optional) The multiplier for exponential backoff. Defaults to 1.5.
-  - `randomization_factor` - (Optional) The randomization factor for jitter. Defaults to 0.5.
-  DESCRIPTION
-}
-
 variable "role_assignments" {
   type = map(object({
     role_definition_id_or_name             = string

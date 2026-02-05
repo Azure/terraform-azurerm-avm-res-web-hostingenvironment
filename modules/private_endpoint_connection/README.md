@@ -74,24 +74,6 @@ object({
 
 Default: `{}`
 
-### <a name="input_retry"></a> [retry](#input\_retry)
-
-Description: Retry configuration for transient errors.
-
-Type:
-
-```hcl
-object({
-    error_message_regex  = optional(list(string), null)
-    interval_seconds     = optional(number, 10)
-    max_interval_seconds = optional(number, 180)
-    multiplier           = optional(number, 1.5)
-    randomization_factor = optional(number, 0.5)
-  })
-```
-
-Default: `null`
-
 ### <a name="input_timeouts"></a> [timeouts](#input\_timeouts)
 
 Description: Timeouts for resource operations.

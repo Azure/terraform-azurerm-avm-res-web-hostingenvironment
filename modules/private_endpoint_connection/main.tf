@@ -16,17 +16,6 @@ resource "azapi_resource" "this" {
   response_export_values    = ["properties.provisioningState"]
   schema_validation_enabled = true
 
-  dynamic "retry" {
-    for_each = var.retry != null ? [var.retry] : []
-
-    content {
-      error_message_regex  = retry.value.error_message_regex
-      interval_seconds     = retry.value.interval_seconds
-      max_interval_seconds = retry.value.max_interval_seconds
-      multiplier           = retry.value.multiplier
-      randomization_factor = retry.value.randomization_factor
-    }
-  }
   timeouts {
     create = var.timeouts.create
     delete = var.timeouts.delete
