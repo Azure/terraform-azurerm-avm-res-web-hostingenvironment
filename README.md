@@ -14,24 +14,22 @@ This is the web hosting environment (App Service Environment) resource module fo
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.5)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.9)
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.4)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 4.0.0, < 5.0.0)
-
 - <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
 
-- <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.5)
+- <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.6)
 
 ## Resources
 
 The following resources are used by this module:
 
-- [azurerm_app_service_environment_v3.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/app_service_environment_v3) (resource)
-- [azurerm_management_lock.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_lock) (resource)
-- [azurerm_monitor_diagnostic_setting.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_diagnostic_setting) (resource)
-- [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
+- [azapi_resource.diagnostic_setting](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.lock](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.role_assignment](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.this](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [modtm_telemetry.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/resources/telemetry) (resource)
 - [random_uuid.telemetry](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) (resource)
 - [azapi_client_config.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
@@ -42,9 +40,15 @@ The following resources are used by this module:
 
 The following input variables are required:
 
+### <a name="input_location"></a> [location](#input\_location)
+
+Description: The Azure region where the App Service Environment will be deployed.
+
+Type: `string`
+
 ### <a name="input_name"></a> [name](#input\_name)
 
-Description: The name of the this resource.
+Description: The name of this resource.
 
 Type: `string`
 
@@ -56,7 +60,7 @@ Type: `string`
 
 ### <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id)
 
-Description: The ID of the Subnet which the App Service Environment should be connected to.
+Description: The ID of the Subnet which the App Service Environment should be connected to. The subnet must be delegated to Microsoft.Web/hostingEnvironments.
 
 Type: `string`
 
@@ -66,26 +70,48 @@ The following input variables are optional (have default values):
 
 ### <a name="input_allow_new_private_endpoint_connections"></a> [allow\_new\_private\_endpoint\_connections](#input\_allow\_new\_private\_endpoint\_connections)
 
-Description: Should new Private Endpoint Connections be allowed. Defaults to true.
+Description: Property to enable and disable new private endpoint connection creation on ASE. Defaults to true.
 
 Type: `bool`
 
-Default: `null`
+Default: `true`
 
-### <a name="input_cluster_setting"></a> [cluster\_setting](#input\_cluster\_setting)
+### <a name="input_cluster_settings"></a> [cluster\_settings](#input\_cluster\_settings)
 
-Description: You can store App Service Environment customizations by using an array in the new clusterSettings attribute. This attribute is found in the ''Properties'' dictionary of the hostingEnvironments Azure Resource Manager entity.
+Description: Custom settings for changing the behavior of the App Service Environment. These settings are stored in the clusterSettings attribute of the hostingEnvironments Azure Resource Manager entity.
 
 Type:
 
 ```hcl
-map(object({
-    name  = optional(string, null)
-    value = optional(string, null)
+list(object({
+    name  = string
+    value = string
   }))
 ```
 
-Default: `{}`
+Default: `null`
+
+### <a name="input_custom_dns_suffix_configuration"></a> [custom\_dns\_suffix\_configuration](#input\_custom\_dns\_suffix\_configuration)
+
+Description:   Full view of the custom domain suffix configuration for ASEv3. The following properties can be specified:
+
+  - `kind` - (Optional) Kind of resource.
+  - `certificate_url` - (Required) The URL referencing the Azure Key Vault certificate secret that should be used as the default SSL/TLS certificate for sites with the custom domain suffix.
+  - `dns_suffix` - (Required) The default custom domain suffix to use for all sites deployed on the ASE.
+  - `key_vault_reference_identity` - (Optional) The user-assigned identity to use for resolving the key vault certificate reference. If not specified, the system-assigned ASE identity will be used if available.
+
+Type:
+
+```hcl
+object({
+    kind                         = optional(string, null)
+    certificate_url              = string
+    dns_suffix                   = string
+    key_vault_reference_identity = optional(string, null)
+  })
+```
+
+Default: `null`
 
 ### <a name="input_customer_managed_key"></a> [customer\_managed\_key](#input\_customer\_managed\_key)
 
@@ -108,7 +134,7 @@ Default: `null`
 
 ### <a name="input_dedicated_host_count"></a> [dedicated\_host\_count](#input\_dedicated\_host\_count)
 
-Description: This ASEv3 should use dedicated Hosts. Possible values are 2
+Description: Dedicated Host Count for this ASEv3. Possible value is 2. Setting this value will make the ASE use dedicated hosts.
 
 Type: `number`
 
@@ -116,7 +142,7 @@ Default: `null`
 
 ### <a name="input_diagnostic_settings"></a> [diagnostic\_settings](#input\_diagnostic\_settings)
 
-Description:   A map of diagnostic settings to create on the Key Vault. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+Description:   A map of diagnostic settings to create on the App Service Environment. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
 
   - `name` - (Optional) The name of the diagnostic setting. One will be generated if not set, however this will not be unique if you want to create multiple diagnostic setting resources.
   - `log_categories` - (Optional) A set of log categories to send to the log analytics workspace. Defaults to `[]`.
@@ -127,7 +153,7 @@ Description:   A map of diagnostic settings to create on the Key Vault. The map 
   - `storage_account_resource_id` - (Optional) The resource ID of the storage account to send logs and metrics to.
   - `event_hub_authorization_rule_resource_id` - (Optional) The resource ID of the event hub authorization rule to send logs and metrics to.
   - `event_hub_name` - (Optional) The name of the event hub. If none is specified, the default event hub will be selected.
-  - `marketplace_partner_resource_id` - (Optional) The full ARM resource ID of the Marketplace resource to which you would like to send Diagnostic LogsLogs.
+  - `marketplace_partner_resource_id` - (Optional) The full ARM resource ID of the Marketplace resource to which you would like to send Diagnostic Logs.
 
 Type:
 
@@ -148,6 +174,14 @@ map(object({
 
 Default: `{}`
 
+### <a name="input_dns_suffix"></a> [dns\_suffix](#input\_dns\_suffix)
+
+Description: DNS suffix of the App Service Environment.
+
+Type: `string`
+
+Default: `null`
+
 ### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
 
 Description: This variable controls whether or not telemetry is enabled for the module.  
@@ -158,19 +192,59 @@ Type: `bool`
 
 Default: `true`
 
+### <a name="input_front_end_scale_factor"></a> [front\_end\_scale\_factor](#input\_front\_end\_scale\_factor)
+
+Description: Scale factor for front-ends. Must be between 5 and 15.
+
+Type: `number`
+
+Default: `null`
+
+### <a name="input_ftp_enabled"></a> [ftp\_enabled](#input\_ftp\_enabled)
+
+Description: Property to enable and disable FTP on ASEV3.
+
+Type: `bool`
+
+Default: `null`
+
+### <a name="input_inbound_ip_address_override"></a> [inbound\_ip\_address\_override](#input\_inbound\_ip\_address\_override)
+
+Description: Customer provided Inbound IP Address. Only able to be set on ASE create.
+
+Type: `string`
+
+Default: `null`
+
 ### <a name="input_internal_load_balancing_mode"></a> [internal\_load\_balancing\_mode](#input\_internal\_load\_balancing\_mode)
 
-Description:  Specifies which endpoints to serve internally in the Virtual Network for the App Service Environment.
+Description: Specifies which endpoints to serve internally in the Virtual Network for the App Service Environment. Possible values are 'None', 'Web', 'Publishing', or 'Web, Publishing'.
 
 Type: `string`
 
 Default: `"None"`
 
+### <a name="input_ipssl_address_count"></a> [ipssl\_address\_count](#input\_ipssl\_address\_count)
+
+Description: Number of IP SSL addresses reserved for the App Service Environment.
+
+Type: `number`
+
+Default: `null`
+
+### <a name="input_kind"></a> [kind](#input\_kind)
+
+Description: Kind of resource. Can be 'ASEV3' for App Service Environment v3.
+
+Type: `string`
+
+Default: `"ASEV3"`
+
 ### <a name="input_lock"></a> [lock](#input\_lock)
 
 Description:   Controls the Resource Lock configuration for this resource. The following properties can be specified:
 
-  - `kind` - (Required) The type of lock. Possible values are `\"CanNotDelete\"` and `\"ReadOnly\"`.
+  - `kind` - (Required) The type of lock. Possible values are `"CanNotDelete"` and `"ReadOnly"`.
   - `name` - (Optional) The name of the lock. If not specified, a name will be generated based on the `kind` value. Changing this forces the creation of a new resource.
 
 Type:
@@ -184,24 +258,44 @@ object({
 
 Default: `null`
 
-### <a name="input_managed_identities"></a> [managed\_identities](#input\_managed\_identities)
+### <a name="input_multi_size"></a> [multi\_size](#input\_multi\_size)
 
-Description: Managed identities to be created for the resource.
+Description: Front-end VM size, e.g. 'Medium', 'Large'.
+
+Type: `string`
+
+Default: `null`
+
+### <a name="input_private_endpoint_connections"></a> [private\_endpoint\_connections](#input\_private\_endpoint\_connections)
+
+Description:   A map of private endpoint connections to create. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+
+  - `name` - (Optional) The name of the private endpoint connection.
+  - `ip_addresses` - (Optional) A list of IP addresses for the private endpoint.
+  - `private_link_service_connection_state` - (Optional) The state of the private link service connection.
+    - `actions_required` - (Optional) Actions required for the connection.
+    - `description` - (Optional) A description of the connection.
+    - `status` - (Optional) The status of the connection. Defaults to 'Approved'.
 
 Type:
 
 ```hcl
-object({
-    system_assigned            = optional(bool, false)
-    user_assigned_resource_ids = optional(set(string), [])
-  })
+map(object({
+    name         = optional(string, null)
+    ip_addresses = optional(list(string), [])
+    private_link_service_connection_state = optional(object({
+      actions_required = optional(string, null)
+      description      = optional(string, null)
+      status           = optional(string, "Approved")
+    }), {})
+  }))
 ```
 
 Default: `{}`
 
-### <a name="input_remote_debugging_enabled"></a> [remote\_debugging\_enabled](#input\_remote\_debugging\_enabled)
+### <a name="input_remote_debug_enabled"></a> [remote\_debug\_enabled](#input\_remote\_debug\_enabled)
 
-Description: Specifies if remote debugging is enabled. Defaults to false.
+Description: Property to enable and disable Remote Debug on ASEV3.
 
 Type: `bool`
 
@@ -209,7 +303,7 @@ Default: `null`
 
 ### <a name="input_role_assignments"></a> [role\_assignments](#input\_role\_assignments)
 
-Description:   A map of role assignments to create on the <RESOURCE>. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+Description:   A map of role assignments to create on the App Service Environment. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
 
   - `role_definition_id_or_name` - The ID or name of the role definition to assign to the principal.
   - `principal_id` - The ID of the principal to assign the role to.
@@ -239,6 +333,14 @@ map(object({
 
 Default: `{}`
 
+### <a name="input_subnet_name"></a> [subnet\_name](#input\_subnet\_name)
+
+Description: Subnet name within the Virtual Network. This is extracted from subnet\_id if not provided.
+
+Type: `string`
+
+Default: `null`
+
 ### <a name="input_tags"></a> [tags](#input\_tags)
 
 Description: (Optional) Tags of the resource.
@@ -247,9 +349,25 @@ Type: `map(string)`
 
 Default: `null`
 
+### <a name="input_upgrade_preference"></a> [upgrade\_preference](#input\_upgrade\_preference)
+
+Description: Upgrade Preference. Possible values are 'None', 'Early', 'Late', or 'Manual'.
+
+Type: `string`
+
+Default: `"None"`
+
+### <a name="input_user_whitelisted_ip_ranges"></a> [user\_whitelisted\_ip\_ranges](#input\_user\_whitelisted\_ip\_ranges)
+
+Description: User added IP ranges to whitelist on ASE database.
+
+Type: `list(string)`
+
+Default: `null`
+
 ### <a name="input_zone_redundant"></a> [zone\_redundant](#input\_zone\_redundant)
 
-Description: Specifies if the App Service Environment is zone redundant. Defaults to true. Zonal ASEs can only be deployed in some regions
+Description: Specifies if the App Service Environment is zone redundant. Defaults to true. Zonal ASEs can only be deployed in some regions.
 
 Type: `bool`
 
@@ -259,21 +377,61 @@ Default: `true`
 
 The following outputs are exported:
 
+### <a name="output_dns_suffix"></a> [dns\_suffix](#output\_dns\_suffix)
+
+Description: The DNS suffix of the App Service Environment.
+
+### <a name="output_external_inbound_ip_addresses"></a> [external\_inbound\_ip\_addresses](#output\_external\_inbound\_ip\_addresses)
+
+Description: The external inbound IP addresses of the App Service Environment.
+
+### <a name="output_internal_inbound_ip_addresses"></a> [internal\_inbound\_ip\_addresses](#output\_internal\_inbound\_ip\_addresses)
+
+Description: The internal inbound IP addresses of the App Service Environment.
+
+### <a name="output_linux_outbound_ip_addresses"></a> [linux\_outbound\_ip\_addresses](#output\_linux\_outbound\_ip\_addresses)
+
+Description: The Linux outbound IP addresses of the App Service Environment.
+
+### <a name="output_location"></a> [location](#output\_location)
+
+Description: The location of the App Service Environment.
+
 ### <a name="output_name"></a> [name](#output\_name)
 
-Description: The name of the resource.
+Description: The name of the App Service Environment.
+
+### <a name="output_private_endpoint_connections"></a> [private\_endpoint\_connections](#output\_private\_endpoint\_connections)
+
+Description: The private endpoint connections created for the App Service Environment.
 
 ### <a name="output_resource"></a> [resource](#output\_resource)
 
-Description: The full resource object
+Description: The full resource object for the App Service Environment.
 
 ### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 
-Description: This is the full output for the resource.
+Description: The resource ID of the App Service Environment.
+
+### <a name="output_windows_outbound_ip_addresses"></a> [windows\_outbound\_ip\_addresses](#output\_windows\_outbound\_ip\_addresses)
+
+Description: The Windows outbound IP addresses of the App Service Environment.
 
 ## Modules
 
-No modules.
+The following Modules are called:
+
+### <a name="module_avm_interfaces"></a> [avm\_interfaces](#module\_avm\_interfaces)
+
+Source: Azure/avm-utl-interfaces/azure
+
+Version: 0.5.0
+
+### <a name="module_private_endpoint_connection"></a> [private\_endpoint\_connection](#module\_private\_endpoint\_connection)
+
+Source: ./modules/private_endpoint_connection
+
+Version:
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection

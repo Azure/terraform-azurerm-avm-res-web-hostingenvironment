@@ -54,6 +54,6 @@ data "azapi_client_config" "telemetry" {
 }
 
 locals {
-  main_location = "unknown"
+  main_location = var.location
 }
 

@@ -1,77 +1,128 @@
-resource "azurerm_app_service_environment_v3" "this" {
-  name                                   = var.name # calling code must supply the name
-  resource_group_name                    = var.resource_group_name
-  subnet_id                              = var.subnet_id
-  allow_new_private_endpoint_connections = var.allow_new_private_endpoint_connections
-  dedicated_host_count                   = var.dedicated_host_count
-  internal_load_balancing_mode           = var.internal_load_balancing_mode
-  remote_debugging_enabled               = var.remote_debugging_enabled
-  tags                                   = var.tags
-  zone_redundant                         = var.zone_redundant
-
-  dynamic "cluster_setting" {
-    for_each = var.cluster_setting
-
-    content {
-      name  = cluster_setting.value.name
-      value = cluster_setting.value.value
+# Main App Service Environment v3 resource using AzAPI
+resource "azapi_resource" "this" {
+  location  = var.location
+  name      = var.name
+  parent_id = "/subscriptions/${local.subscription_id}/resourceGroups/${var.resource_group_name}"
+  type      = "Microsoft.Web/hostingEnvironments@2024-04-01"
+  body = {
+    kind = var.kind
+    properties = {
+      clusterSettings = var.cluster_settings != null ? [
+        for setting in var.cluster_settings : {
+          name  = setting.name
+          value = setting.value
+        }
+      ] : null
+      customDnsSuffixConfiguration = var.custom_dns_suffix_configuration != null ? {
+        kind = var.custom_dns_suffix_configuration.kind
+        properties = {
+          certificateUrl            = var.custom_dns_suffix_configuration.certificate_url
+          dnsSuffix                 = var.custom_dns_suffix_configuration.dns_suffix
+          keyVaultReferenceIdentity = var.custom_dns_suffix_configuration.key_vault_reference_identity
+        }
+      } : null
+      dedicatedHostCount        = var.dedicated_host_count
+      dnsSuffix                 = var.dns_suffix
+      frontEndScaleFactor       = var.front_end_scale_factor
+      internalLoadBalancingMode = var.internal_load_balancing_mode
+      ipsslAddressCount         = var.ipssl_address_count
+      multiSize                 = var.multi_size
+      networkingConfiguration = {
+        kind = null
+        properties = {
+          allowNewPrivateEndpointConnections = var.allow_new_private_endpoint_connections
+          ftpEnabled                         = var.ftp_enabled
+          inboundIpAddressOverride           = var.inbound_ip_address_override
+          remoteDebugEnabled                 = var.remote_debug_enabled
+        }
+      }
+      upgradePreference       = var.upgrade_preference
+      userWhitelistedIpRanges = var.user_whitelisted_ip_ranges
+      virtualNetwork = {
+        id     = local.virtual_network_id
+        subnet = var.subnet_name
+      }
+      zoneRedundant = var.zone_redundant
     }
+  }
+  create_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  delete_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  read_headers              = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  response_export_values    = ["*"]
+  schema_validation_enabled = true
+  tags                      = var.tags
+  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+
+  timeouts {
+    create = "6h"
+    delete = "6h"
+    read   = "5m"
+    update = "6h"
   }
 }
 
-# required AVM resources interfaces
-resource "azurerm_management_lock" "this" {
+# AVM Interfaces Module - handles diagnostic settings, locks, role assignments
+module "avm_interfaces" {
+  source  = "Azure/avm-utl-interfaces/azure"
+  version = "0.5.0"
+
+  diagnostic_settings                  = var.diagnostic_settings
+  enable_telemetry                     = var.enable_telemetry
+  lock                                 = var.lock
+  role_assignment_definition_scope     = azapi_resource.this.id
+  role_assignment_name_use_random_uuid = true
+  role_assignments                     = var.role_assignments
+}
+
+# Resource Lock using AzAPI
+resource "azapi_resource" "lock" {
   count = var.lock != null ? 1 : 0
 
-  lock_level = var.lock.kind
-  name       = coalesce(var.lock.name, "lock-${var.lock.kind}")
-  scope      = azurerm_app_service_environment_v3.this.id
+  name           = module.avm_interfaces.lock_azapi.name
+  parent_id      = azapi_resource.this.id
+  type           = module.avm_interfaces.lock_azapi.type
+  body           = module.avm_interfaces.lock_azapi.body
+  create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 }
 
-resource "azurerm_role_assignment" "this" {
-  for_each = var.role_assignments
+# Role Assignments using AzAPI
+resource "azapi_resource" "role_assignment" {
+  for_each = module.avm_interfaces.role_assignments_azapi
 
-  principal_id                           = each.value.principal_id
-  scope                                  = azurerm_app_service_environment_v3.this.id
-  condition                              = each.value.condition
-  condition_version                      = each.value.condition_version
-  delegated_managed_identity_resource_id = each.value.delegated_managed_identity_resource_id
-  role_definition_id                     = strcontains(lower(each.value.role_definition_id_or_name), lower(local.role_definition_resource_substring)) ? each.value.role_definition_id_or_name : null
-  role_definition_name                   = strcontains(lower(each.value.role_definition_id_or_name), lower(local.role_definition_resource_substring)) ? null : each.value.role_definition_id_or_name
-  skip_service_principal_aad_check       = each.value.skip_service_principal_aad_check
+  name           = each.value.name
+  parent_id      = azapi_resource.this.id
+  type           = each.value.type
+  body           = each.value.body
+  create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 }
 
-resource "azurerm_monitor_diagnostic_setting" "this" {
-  for_each = var.diagnostic_settings
+# Diagnostic Settings using AzAPI
+resource "azapi_resource" "diagnostic_setting" {
+  for_each = module.avm_interfaces.diagnostic_settings_azapi
 
-  name                           = each.value.name != null ? each.value.name : "diag-${var.name}"
-  target_resource_id             = azurerm_app_service_environment_v3.this.id
-  eventhub_authorization_rule_id = each.value.event_hub_authorization_rule_resource_id
-  eventhub_name                  = each.value.event_hub_name
-  log_analytics_destination_type = each.value.log_analytics_destination_type == "Dedicated" ? null : each.value.log_analytics_destination_type
-  log_analytics_workspace_id     = each.value.workspace_resource_id
-  partner_solution_id            = each.value.marketplace_partner_resource_id
-  storage_account_id             = each.value.storage_account_resource_id
+  name           = each.value.name
+  parent_id      = azapi_resource.this.id
+  type           = each.value.type
+  body           = each.value.body
+  create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+}
 
-  dynamic "enabled_log" {
-    for_each = each.value.log_categories
+# Private Endpoint Connections submodule
+module "private_endpoint_connection" {
+  source   = "./modules/private_endpoint_connection"
+  for_each = var.private_endpoint_connections
 
-    content {
-      category = enabled_log.value
-    }
-  }
-  dynamic "enabled_log" {
-    for_each = each.value.log_groups
-
-    content {
-      category_group = enabled_log.value
-    }
-  }
-  dynamic "enabled_metric" {
-    for_each = each.value.metric_categories
-
-    content {
-      category = enabled_metric.value
-    }
-  }
+  hosting_environment_id                = azapi_resource.this.id
+  name                                  = coalesce(each.value.name, each.key)
+  ip_addresses                          = each.value.ip_addresses
+  private_link_service_connection_state = each.value.private_link_service_connection_state
 }
