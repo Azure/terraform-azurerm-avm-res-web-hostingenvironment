@@ -189,8 +189,6 @@ module "test" {
   }
   # Upgrade preference
   upgrade_preference = "Early"
-  # IP whitelisting
-  user_whitelisted_ip_ranges = ["10.0.0.0/8", "172.16.0.0/12"]
   # Zone redundancy
   zone_redundant = true
 }

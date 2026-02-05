@@ -327,12 +327,6 @@ variable "upgrade_preference" {
   }
 }
 
-variable "user_whitelisted_ip_ranges" {
-  type        = list(string)
-  default     = null
-  description = "User added IP ranges to whitelist on ASE database."
-}
-
 variable "zone_redundant" {
   type        = bool
   default     = true

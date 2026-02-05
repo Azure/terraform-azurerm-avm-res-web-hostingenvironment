@@ -375,14 +375,6 @@ Type: `string`
 
 Default: `"None"`
 
-### <a name="input_user_whitelisted_ip_ranges"></a> [user\_whitelisted\_ip\_ranges](#input\_user\_whitelisted\_ip\_ranges)
-
-Description: User added IP ranges to whitelist on ASE database.
-
-Type: `list(string)`
-
-Default: `null`
-
 ### <a name="input_zone_redundant"></a> [zone\_redundant](#input\_zone\_redundant)
 
 Description: Specifies if the App Service Environment is zone redundant. Defaults to true. Zonal ASEs can only be deployed in some regions.

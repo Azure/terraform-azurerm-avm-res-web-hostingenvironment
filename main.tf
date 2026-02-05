@@ -36,8 +36,7 @@ resource "azapi_resource" "this" {
           remoteDebugEnabled                 = var.remote_debug_enabled
         }
       }
-      upgradePreference       = var.upgrade_preference
-      userWhitelistedIpRanges = var.user_whitelisted_ip_ranges
+      upgradePreference = var.upgrade_preference
       virtualNetwork = {
         id = var.subnet_id
       }
