@@ -1,6 +1,7 @@
 variable "location" {
   type        = string
   description = "The Azure region where the App Service Environment will be deployed."
+  nullable    = false
 }
 
 variable "name" {

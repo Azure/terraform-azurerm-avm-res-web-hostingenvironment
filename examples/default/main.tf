@@ -38,8 +38,6 @@ resource "random_integer" "region_index" {
 
 ## End of section to provide a random Azure region for the resource group
 
-data "azapi_client_config" "current" {}
-
 # This ensures we have unique CAF compliant names for our resources.
 module "naming" {
   source  = "Azure/naming/azurerm"
