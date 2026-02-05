@@ -258,6 +258,51 @@ object({
 
 Default: `null`
 
+### <a name="input_multi_role_pools"></a> [multi\_role\_pools](#input\_multi\_role\_pools)
+
+Description:   A map of multi-role pools (front-end pools) to configure for the App Service Environment. This is primarily used for ASEv1/v2.
+
+  - `compute_mode` - (Optional) Shared or dedicated app hosting. Possible values are 'Dedicated', 'Dynamic', or 'Shared'.
+  - `kind` - (Optional) Kind of resource.
+  - `worker_count` - (Optional) Number of instances in the front-end pool.
+  - `worker_size` - (Optional) VM size of the front-end pool instances.
+  - `worker_size_id` - (Optional) Worker size ID for referencing this worker pool.
+  - `sku` - (Optional) SKU configuration for scaling.
+
+Type:
+
+```hcl
+map(object({
+    compute_mode   = optional(string, null)
+    kind           = optional(string, null)
+    worker_count   = optional(number, null)
+    worker_size    = optional(string, null)
+    worker_size_id = optional(number, null)
+    sku = optional(object({
+      capabilities = optional(list(object({
+        name   = optional(string, null)
+        reason = optional(string, null)
+        value  = optional(string, null)
+      })), null)
+      capacity  = optional(number, null)
+      family    = optional(string, null)
+      locations = optional(list(string), null)
+      name      = optional(string, null)
+      size      = optional(string, null)
+      sku_capacity = optional(object({
+        default         = optional(number, null)
+        elastic_maximum = optional(number, null)
+        maximum         = optional(number, null)
+        minimum         = optional(number, null)
+        scale_type      = optional(string, null)
+      }), null)
+      tier = optional(string, null)
+    }), null)
+  }))
+```
+
+Default: `{}`
+
 ### <a name="input_multi_size"></a> [multi\_size](#input\_multi\_size)
 
 Description: Front-end VM size, e.g. 'Medium', 'Large'.
@@ -365,6 +410,53 @@ Type: `list(string)`
 
 Default: `null`
 
+### <a name="input_worker_pools"></a> [worker\_pools](#input\_worker\_pools)
+
+Description:   A map of worker pools to create for the App Service Environment. This is primarily used for ASEv1/v2.
+
+  - `name` - (Optional) The name of the worker pool. Typically 0, 1, or 2.
+  - `compute_mode` - (Optional) Shared or dedicated app hosting. Possible values are 'Dedicated', 'Dynamic', or 'Shared'.
+  - `kind` - (Optional) Kind of resource.
+  - `worker_count` - (Optional) Number of instances in the worker pool.
+  - `worker_size` - (Optional) VM size of the worker pool instances.
+  - `worker_size_id` - (Optional) Worker size ID for referencing this worker pool.
+  - `sku` - (Optional) SKU configuration for scaling.
+
+Type:
+
+```hcl
+map(object({
+    name           = optional(string, null)
+    compute_mode   = optional(string, null)
+    kind           = optional(string, null)
+    worker_count   = optional(number, null)
+    worker_size    = optional(string, null)
+    worker_size_id = optional(number, null)
+    sku = optional(object({
+      capabilities = optional(list(object({
+        name   = optional(string, null)
+        reason = optional(string, null)
+        value  = optional(string, null)
+      })), null)
+      capacity  = optional(number, null)
+      family    = optional(string, null)
+      locations = optional(list(string), null)
+      name      = optional(string, null)
+      size      = optional(string, null)
+      sku_capacity = optional(object({
+        default         = optional(number, null)
+        elastic_maximum = optional(number, null)
+        maximum         = optional(number, null)
+        minimum         = optional(number, null)
+        scale_type      = optional(string, null)
+      }), null)
+      tier = optional(string, null)
+    }), null)
+  }))
+```
+
+Default: `{}`
+
 ### <a name="input_zone_redundant"></a> [zone\_redundant](#input\_zone\_redundant)
 
 Description: Specifies if the App Service Environment is zone redundant. Defaults to true. Zonal ASEs can only be deployed in some regions.
@@ -397,6 +489,10 @@ Description: The Linux outbound IP addresses of the App Service Environment.
 
 Description: The location of the App Service Environment.
 
+### <a name="output_multi_role_pools"></a> [multi\_role\_pools](#output\_multi\_role\_pools)
+
+Description: The multi-role pools (front-end pools) created for the App Service Environment.
+
 ### <a name="output_name"></a> [name](#output\_name)
 
 Description: The name of the App Service Environment.
@@ -417,6 +513,10 @@ Description: The resource ID of the App Service Environment.
 
 Description: The Windows outbound IP addresses of the App Service Environment.
 
+### <a name="output_worker_pools"></a> [worker\_pools](#output\_worker\_pools)
+
+Description: The worker pools created for the App Service Environment.
+
 ## Modules
 
 The following Modules are called:
@@ -427,9 +527,21 @@ Source: Azure/avm-utl-interfaces/azure
 
 Version: 0.5.0
 
+### <a name="module_multi_role_pool"></a> [multi\_role\_pool](#module\_multi\_role\_pool)
+
+Source: ./modules/multi_role_pool
+
+Version:
+
 ### <a name="module_private_endpoint_connection"></a> [private\_endpoint\_connection](#module\_private\_endpoint\_connection)
 
 Source: ./modules/private_endpoint_connection
+
+Version:
+
+### <a name="module_worker_pool"></a> [worker\_pool](#module\_worker\_pool)
+
+Source: ./modules/worker_pool
 
 Version:
 

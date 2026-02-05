@@ -23,6 +23,11 @@ output "location" {
   value       = azapi_resource.this.location
 }
 
+output "multi_role_pools" {
+  description = "The multi-role pools (front-end pools) created for the App Service Environment."
+  value       = module.multi_role_pool
+}
+
 output "name" {
   description = "The name of the App Service Environment."
   value       = azapi_resource.this.name
@@ -48,4 +53,9 @@ output "resource_id" {
 output "windows_outbound_ip_addresses" {
   description = "The Windows outbound IP addresses of the App Service Environment."
   value       = try(azapi_resource.this.output.properties.networkingConfiguration.properties.windowsOutboundIpAddresses, [])
+}
+
+output "worker_pools" {
+  description = "The worker pools created for the App Service Environment."
+  value       = module.worker_pool
 }
