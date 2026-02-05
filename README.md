@@ -113,25 +113,6 @@ object({
 
 Default: `null`
 
-### <a name="input_customer_managed_key"></a> [customer\_managed\_key](#input\_customer\_managed\_key)
-
-Description: Customer managed keys that should be associated with the resource.
-
-Type:
-
-```hcl
-object({
-    key_vault_resource_id = string
-    key_name              = string
-    key_version           = optional(string, null)
-    user_assigned_identity = optional(object({
-      resource_id = string
-    }), null)
-  })
-```
-
-Default: `null`
-
 ### <a name="input_dedicated_host_count"></a> [dedicated\_host\_count](#input\_dedicated\_host\_count)
 
 Description: Dedicated Host Count for this ASEv3. Possible value is 2. Setting this value will make the ASE use dedicated hosts.
