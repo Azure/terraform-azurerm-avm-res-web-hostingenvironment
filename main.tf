@@ -12,7 +12,7 @@ resource "azapi_resource" "this" {
           name  = setting.name
           value = setting.value
         }
-      ] : null
+      ] : []
       customDnsSuffixConfiguration = var.custom_dns_suffix_configuration != null ? {
         kind = var.custom_dns_suffix_configuration.kind
         properties = {
@@ -21,8 +21,7 @@ resource "azapi_resource" "this" {
           keyVaultReferenceIdentity = var.custom_dns_suffix_configuration.key_vault_reference_identity
         }
       } : null
-      dedicatedHostCount        = var.dedicated_host_count
-      dnsSuffix                 = var.dns_suffix
+      dedicatedHostCount        = var.dedicated_host_count == null ? 0 : var.dedicated_host_count
       frontEndScaleFactor       = var.front_end_scale_factor
       internalLoadBalancingMode = var.internal_load_balancing_mode
       ipsslAddressCount         = var.ipssl_address_count

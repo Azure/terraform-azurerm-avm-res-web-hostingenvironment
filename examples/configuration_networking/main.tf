@@ -6,6 +6,10 @@ terraform {
       source  = "Azure/azapi"
       version = "~> 2.4"
     }
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 4.0"
+    }
     random = {
       source  = "hashicorp/random"
       version = ">= 3.6.0, < 4.0.0"
@@ -13,6 +17,9 @@ terraform {
   }
 }
 
+provider "azurerm" {
+  features {}
+}
 provider "azapi" {}
 
 ## Section to provide a random Azure region for the resource group

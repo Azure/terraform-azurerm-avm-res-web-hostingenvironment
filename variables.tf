@@ -46,7 +46,7 @@ variable "cluster_settings" {
     name  = string
     value = string
   }))
-  default     = null
+  default     = []
   description = "Custom settings for changing the behavior of the App Service Environment. These settings are stored in the clusterSettings attribute of the hostingEnvironments Azure Resource Manager entity."
 }
 
@@ -122,12 +122,6 @@ variable "diagnostic_settings" {
     )
     error_message = "At least one of `workspace_resource_id`, `storage_account_resource_id`, `marketplace_partner_resource_id`, or `event_hub_authorization_rule_resource_id`, must be set."
   }
-}
-
-variable "dns_suffix" {
-  type        = string
-  default     = null
-  description = "DNS suffix of the App Service Environment."
 }
 
 variable "enable_telemetry" {
