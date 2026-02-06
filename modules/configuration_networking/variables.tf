@@ -16,12 +16,6 @@ variable "ftp_enabled" {
   description = "Enable FTP on the App Service Environment (ASE)."
 }
 
-variable "kind" {
-  type        = string
-  default     = null
-  description = "Kind of resource."
-}
-
 variable "remote_debug_enabled" {
   type        = bool
   default     = null

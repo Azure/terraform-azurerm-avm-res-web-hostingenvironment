@@ -4,17 +4,13 @@ resource "azapi_resource" "this" {
   parent_id = var.hosting_environment_id
   type      = "Microsoft.Web/hostingEnvironments/configurations@2025-03-01"
   body = {
-    kind = var.kind
     properties = {
       certificateUrl            = var.certificate_url
       dnsSuffix                 = var.dns_suffix
       keyVaultReferenceIdentity = var.key_vault_reference_identity
     }
   }
-  response_export_values = [
-    "properties.provisioningState",
-    "properties.provisioningDetails"
-  ]
+  response_export_values = []
   retry = var.retry != null ? {
     error_message_regex  = var.retry.error_message_regex
     interval_seconds     = var.retry.interval_seconds

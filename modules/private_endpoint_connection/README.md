@@ -119,10 +119,6 @@ The following outputs are exported:
 
 Description: The name of the private endpoint connection.
 
-### <a name="output_provisioning_state"></a> [provisioning\_state](#output\_provisioning\_state)
-
-Description: The provisioning state of the private endpoint connection.
-
 ### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 
 Description: The resource ID of the private endpoint connection.

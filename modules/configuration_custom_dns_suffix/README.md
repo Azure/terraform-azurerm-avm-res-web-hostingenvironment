@@ -60,14 +60,6 @@ Type: `string`
 
 Default: `null`
 
-### <a name="input_kind"></a> [kind](#input\_kind)
-
-Description: Kind of resource.
-
-Type: `string`
-
-Default: `null`
-
 ### <a name="input_retry"></a> [retry](#input\_retry)
 
 Description:   Retry configuration for transient errors. The following properties can be specified:
@@ -112,14 +104,6 @@ The following outputs are exported:
 ### <a name="output_name"></a> [name](#output\_name)
 
 Description: The name of the custom DNS suffix configuration.
-
-### <a name="output_provisioning_details"></a> [provisioning\_details](#output\_provisioning\_details)
-
-Description: The provisioning details of the custom DNS suffix configuration.
-
-### <a name="output_provisioning_state"></a> [provisioning\_state](#output\_provisioning\_state)
-
-Description: The provisioning state of the custom DNS suffix configuration.
 
 ### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 

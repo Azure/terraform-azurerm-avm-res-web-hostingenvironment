@@ -57,14 +57,6 @@ Type: `bool`
 
 Default: `null`
 
-### <a name="input_kind"></a> [kind](#input\_kind)
-
-Description: Kind of resource.
-
-Type: `string`
-
-Default: `null`
-
 ### <a name="input_remote_debug_enabled"></a> [remote\_debug\_enabled](#input\_remote\_debug\_enabled)
 
 Description: Enable Remote Debug on the App Service Environment (ASE).

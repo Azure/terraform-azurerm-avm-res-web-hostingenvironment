@@ -13,7 +13,7 @@ resource "azapi_resource" "this" {
       }
     }
   }
-  response_export_values = ["properties.provisioningState"]
+  response_export_values = []
   retry = var.retry != null ? {
     error_message_regex  = var.retry.error_message_regex
     interval_seconds     = var.retry.interval_seconds

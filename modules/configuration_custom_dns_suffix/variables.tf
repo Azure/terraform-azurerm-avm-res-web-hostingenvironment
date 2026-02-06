@@ -22,12 +22,6 @@ variable "key_vault_reference_identity" {
   description = "The user-assigned identity to use for resolving the key vault certificate reference. If not specified, the system-assigned ASE identity will be used if available."
 }
 
-variable "kind" {
-  type        = string
-  default     = null
-  description = "Kind of resource."
-}
-
 variable "retry" {
   type = object({
     error_message_regex  = optional(list(string), null)

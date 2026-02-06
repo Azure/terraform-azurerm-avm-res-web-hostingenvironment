@@ -4,7 +4,6 @@ resource "azapi_resource" "this" {
   parent_id = var.hosting_environment_id
   type      = "Microsoft.Web/hostingEnvironments/configurations@2025-03-01"
   body = {
-    kind = var.kind
     properties = {
       allowNewPrivateEndpointConnections = var.allow_new_private_endpoint_connections
       ftpEnabled                         = var.ftp_enabled
