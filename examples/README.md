@@ -1,6 +1,6 @@
 # Examples
 
-This directory contains examples demonstrating various configurations of the App Service Environment v3 module.
+This directory contains examples demonstrating various configurations of the App Service Environment (ASE) module.
 
 ## Available Examples
 

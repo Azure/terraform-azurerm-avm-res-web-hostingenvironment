@@ -1,6 +1,6 @@
 # Private Endpoint Connection Example
 
-This example demonstrates two approaches for managing private endpoint connections on an App Service Environment v3:
+This example demonstrates two approaches for managing private endpoint connections on an App Service Environment (ASE):
 
 1. **Using the main module** - Define private endpoint connections directly in the `private_endpoint_connections` variable
 2. **Using the submodule** - Use the `private_endpoint_connection` submodule for standalone management

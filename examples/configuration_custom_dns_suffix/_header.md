@@ -1,6 +1,6 @@
 # Configuration Custom DNS Suffix Example
 
-This example demonstrates the use of the `configuration_custom_dns_suffix` submodule to configure a custom DNS suffix on an existing App Service Environment v3.
+This example demonstrates the use of the `configuration_custom_dns_suffix` submodule to configure a custom DNS suffix on an existing App Service Environment (ASE).
 
 The example includes:
 

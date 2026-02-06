@@ -1,4 +1,4 @@
-# Private Endpoint Connection submodule for App Service Environment
+# Private Endpoint Connection submodule for App Service Environment (ASE)
 resource "azapi_resource" "this" {
   name      = var.name
   parent_id = var.hosting_environment_id

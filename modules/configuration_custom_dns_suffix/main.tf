@@ -1,4 +1,4 @@
-# Custom DNS Suffix Configuration submodule for App Service Environment
+# Custom DNS Suffix Configuration submodule for App Service Environment (ASE)
 resource "azapi_resource" "this" {
   name      = "customdnssuffix"
   parent_id = var.hosting_environment_id

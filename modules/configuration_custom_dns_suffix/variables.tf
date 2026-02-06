@@ -6,13 +6,13 @@ variable "certificate_url" {
 
 variable "dns_suffix" {
   type        = string
-  description = "The default custom domain suffix to use for all sites deployed on the ASE."
+  description = "The default custom domain suffix to use for all sites deployed on the App Service Environment (ASE)."
   nullable    = false
 }
 
 variable "hosting_environment_id" {
   type        = string
-  description = "The resource ID of the hosting environment (App Service Environment) to configure."
+  description = "The resource ID of the App Service Environment (ASE) to configure."
   nullable    = false
 }
 

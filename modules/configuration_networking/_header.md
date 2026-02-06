@@ -1,6 +1,6 @@
 # Networking Configuration
 
-This submodule manages the networking configuration for an App Service Environment v3 using the AzAPI provider.
+This submodule manages the networking configuration for an App Service Environment (ASE) using the AzAPI provider.
 
 ## Features
 

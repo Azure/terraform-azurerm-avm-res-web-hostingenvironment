@@ -13,11 +13,19 @@ terraform {
       source  = "Azure/azapi"
       version = "~> 2.4"
     }
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 4.0"
+    }
     random = {
       source  = "hashicorp/random"
       version = ">= 3.6.0, < 4.0.0"
     }
   }
+}
+
+provider "azurerm" {
+  features {}
 }
 
 provider "azapi" {}
@@ -63,6 +71,11 @@ resource "azapi_resource" "resource_group" {
   body     = {}
 }
 
+moved {
+  from = azurerm_resource_group.this
+  to   = azapi_resource.resource_group
+}
+
 # Log Analytics Workspace using AzAPI
 resource "azapi_resource" "log_analytics_workspace" {
   location  = azapi_resource.resource_group.location
@@ -80,6 +93,11 @@ resource "azapi_resource" "log_analytics_workspace" {
   response_export_values = ["*"]
 }
 
+moved {
+  from = azurerm_log_analytics_workspace.this
+  to   = azapi_resource.log_analytics_workspace
+}
+
 # Virtual Network using AzAPI
 resource "azapi_resource" "virtual_network" {
   location  = azapi_resource.resource_group.location
@@ -94,6 +112,11 @@ resource "azapi_resource" "virtual_network" {
     }
   }
   response_export_values = ["*"]
+}
+
+moved {
+  from = azurerm_virtual_network.example_virtual_network
+  to   = azapi_resource.virtual_network
 }
 
 # Subnet using AzAPI with delegation to App Service Environment
@@ -115,6 +138,11 @@ resource "azapi_resource" "subnet" {
     }
   }
   response_export_values = ["*"]
+}
+
+moved {
+  from = azurerm_subnet.example_subnet
+  to   = azapi_resource.subnet
 }
 
 # This is the module call
@@ -144,6 +172,8 @@ The following requirements are needed by this module:
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.9.0)
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.4)
+
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (>= 3.6.0, < 4.0.0)
 

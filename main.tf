@@ -1,4 +1,4 @@
-# Main App Service Environment v3 resource using AzAPI
+# Main App Service Environment (ASE) resource using AzAPI
 resource "azapi_resource" "this" {
   location  = var.location
   name      = var.name
@@ -7,14 +7,8 @@ resource "azapi_resource" "this" {
   body = {
     kind = "ASEV3"
     properties = {
-      clusterSettings = var.cluster_settings != null ? [
-        for setting in var.cluster_settings : {
-          name  = setting.name
-          value = setting.value
-        }
-      ] : []
+      clusterSettings = local.cluster_settings
       customDnsSuffixConfiguration = var.custom_dns_suffix_configuration != null ? {
-        kind = var.custom_dns_suffix_configuration.kind
         properties = {
           certificateUrl            = var.custom_dns_suffix_configuration.certificate_url
           dnsSuffix                 = var.custom_dns_suffix_configuration.dns_suffix
@@ -22,12 +16,12 @@ resource "azapi_resource" "this" {
         }
       } : null
       dedicatedHostCount        = var.dedicated_host_count == null ? 0 : var.dedicated_host_count
-      frontEndScaleFactor       = var.front_end_scale_factor
+      dnsSuffix                 = null
+      frontEndScaleFactor       = null
       internalLoadBalancingMode = var.internal_load_balancing_mode
-      ipsslAddressCount         = var.ipssl_address_count
-      multiSize                 = var.multi_size
+      ipsslAddressCount         = null
+      multiSize                 = null
       networkingConfiguration = {
-        kind = null
         properties = {
           allowNewPrivateEndpointConnections = var.allow_new_private_endpoint_connections
           ftpEnabled                         = var.ftp_enabled
@@ -35,11 +29,13 @@ resource "azapi_resource" "this" {
           remoteDebugEnabled                 = var.remote_debug_enabled
         }
       }
-      upgradePreference = var.upgrade_preference
+      upgradePreference       = var.upgrade_preference
+      userWhitelistedIpRanges = null
       virtualNetwork = {
-        id = var.subnet_id
+        id     = var.subnet_id
+        subnet = null
       }
-      zoneRedundant = var.zone_redundant
+      zoneRedundant = var.zone_redundancy_enabled
     }
   }
   create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
@@ -61,11 +57,30 @@ resource "azapi_resource" "this" {
   tags                      = var.tags
   update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
+  dynamic "identity" {
+    for_each = local.managed_identities.system_assigned || length(local.managed_identities.user_assigned_resource_ids) > 0 ? [1] : []
+
+    content {
+      type         = local.managed_identities.type
+      identity_ids = local.managed_identities.user_assigned_resource_ids
+    }
+  }
   timeouts {
     create = var.timeouts.create
     delete = var.timeouts.delete
     read   = var.timeouts.read
     update = var.timeouts.update
+  }
+
+  lifecycle {
+    ignore_changes = [
+      body.properties.dnsSuffix,
+      body.properties.frontEndScaleFactor,
+      body.properties.ipsslAddressCount,
+      body.properties.multiSize,
+      body.properties.userWhitelistedIpRanges,
+      body.properties.virtualNetwork.subnet
+    ]
   }
 }
 

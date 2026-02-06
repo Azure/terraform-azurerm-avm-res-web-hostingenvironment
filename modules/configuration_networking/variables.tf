@@ -1,19 +1,19 @@
 variable "hosting_environment_id" {
   type        = string
-  description = "The resource ID of the hosting environment (App Service Environment) to configure."
+  description = "The resource ID of the App Service Environment (ASE) to configure."
   nullable    = false
 }
 
 variable "allow_new_private_endpoint_connections" {
   type        = bool
   default     = null
-  description = "Property to enable and disable new private endpoint connection creation on ASE."
+  description = "Enable new private endpoint connection creation on the App Service Environment (ASE)."
 }
 
 variable "ftp_enabled" {
   type        = bool
   default     = null
-  description = "Property to enable and disable FTP on ASEV3."
+  description = "Enable FTP on the App Service Environment (ASE)."
 }
 
 variable "inbound_ip_address_override" {
@@ -31,7 +31,7 @@ variable "kind" {
 variable "remote_debug_enabled" {
   type        = bool
   default     = null
-  description = "Property to enable and disable Remote Debug on ASEV3."
+  description = "Enable Remote Debug on the App Service Environment (ASE)."
 }
 
 variable "retry" {

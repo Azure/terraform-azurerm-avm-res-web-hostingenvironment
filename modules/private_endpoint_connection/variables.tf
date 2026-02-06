@@ -1,6 +1,6 @@
 variable "hosting_environment_id" {
   type        = string
-  description = "The resource ID of the hosting environment (App Service Environment) to create the private endpoint connection in."
+  description = "The resource ID of the App Service Environment (ASE) to create the private endpoint connection in."
 }
 
 variable "name" {

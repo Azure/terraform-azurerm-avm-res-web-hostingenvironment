@@ -1,6 +1,6 @@
 # Configuration Networking Example
 
-This example demonstrates the use of the `configuration_networking` submodule to configure networking settings on an existing App Service Environment v3.
+This example demonstrates the use of the `configuration_networking` submodule to configure networking settings on an existing App Service Environment (ASE).
 
 The submodule allows you to:
 

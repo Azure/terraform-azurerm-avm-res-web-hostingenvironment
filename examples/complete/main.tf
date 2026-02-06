@@ -190,5 +190,5 @@ module "test" {
   # Upgrade preference
   upgrade_preference = "Early"
   # Zone redundancy
-  zone_redundant = true
+  zone_redundancy_enabled = true
 }

@@ -1,4 +1,4 @@
-# Networking Configuration submodule for App Service Environment
+# Networking Configuration submodule for App Service Environment (ASE)
 resource "azapi_resource" "this" {
   name      = "networking"
   parent_id = var.hosting_environment_id

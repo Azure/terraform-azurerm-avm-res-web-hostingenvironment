@@ -1,6 +1,6 @@
 variable "location" {
   type        = string
-  description = "The Azure region where the App Service Environment will be deployed."
+  description = "The Azure region where the App Service Environment (ASE) will be deployed."
   nullable    = false
 }
 
@@ -16,7 +16,7 @@ variable "name" {
 
 variable "parent_id" {
   type        = string
-  description = "The resource ID of the resource group where the App Service Environment will be deployed."
+  description = "The resource ID of the resource group where the App Service Environment (ASE) will be deployed."
   nullable    = false
 
   validation {
@@ -27,7 +27,7 @@ variable "parent_id" {
 
 variable "subnet_id" {
   type        = string
-  description = "The ID of the Subnet which the App Service Environment should be connected to. The subnet must be delegated to Microsoft.Web/hostingEnvironments."
+  description = "The ID of the Subnet which the App Service Environment (ASE) should be connected to. The subnet must be delegated to Microsoft.Web/hostingEnvironments."
 
   validation {
     condition     = can(provider::azapi::parse_resource_id("Microsoft.Network/virtualNetworks/subnets", var.subnet_id))
@@ -38,7 +38,7 @@ variable "subnet_id" {
 variable "allow_new_private_endpoint_connections" {
   type        = bool
   default     = true
-  description = "Property to enable and disable new private endpoint connection creation on ASE. Defaults to true."
+  description = "Enable new private endpoint connection creation on the App Service Environment (ASE). Defaults to true."
 }
 
 variable "cluster_settings" {
@@ -47,21 +47,20 @@ variable "cluster_settings" {
     value = string
   }))
   default     = []
-  description = "Custom settings for changing the behavior of the App Service Environment. These settings are stored in the clusterSettings attribute of the hostingEnvironments Azure Resource Manager entity."
+  description = "Custom settings for changing the behavior of the App Service Environment (ASE). These settings are stored in the clusterSettings attribute of the hostingEnvironments Azure Resource Manager entity."
+  nullable    = false
 }
 
 variable "custom_dns_suffix_configuration" {
   type = object({
-    kind                         = optional(string, null)
     certificate_url              = string
     dns_suffix                   = string
     key_vault_reference_identity = optional(string, null)
   })
   default     = null
   description = <<DESCRIPTION
-  Full view of the custom domain suffix configuration for ASEv3. The following properties can be specified:
+  Custom domain suffix configuration for the App Service Environment (ASE). The following properties can be specified:
 
-  - `kind` - (Optional) Kind of resource.
   - `certificate_url` - (Required) The URL referencing the Azure Key Vault certificate secret that should be used as the default SSL/TLS certificate for sites with the custom domain suffix.
   - `dns_suffix` - (Required) The default custom domain suffix to use for all sites deployed on the ASE.
   - `key_vault_reference_identity` - (Optional) The user-assigned identity to use for resolving the key vault certificate reference. If not specified, the system-assigned ASE identity will be used if available.
@@ -71,7 +70,7 @@ variable "custom_dns_suffix_configuration" {
 variable "dedicated_host_count" {
   type        = number
   default     = null
-  description = "Dedicated Host Count for this ASEv3. Possible value is 2. Setting this value will make the ASE use dedicated hosts."
+  description = "Dedicated Host Count for the App Service Environment (ASE). Possible value is 2. Setting this value will make the ASE use dedicated hosts."
 
   validation {
     condition     = var.dedicated_host_count == null || var.dedicated_host_count == 2
@@ -94,7 +93,7 @@ variable "diagnostic_settings" {
   }))
   default     = {}
   description = <<DESCRIPTION
-  A map of diagnostic settings to create on the App Service Environment. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+  A map of diagnostic settings to create on the App Service Environment (ASE). The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
 
   - `name` - (Optional) The name of the diagnostic setting. One will be generated if not set, however this will not be unique if you want to create multiple diagnostic setting resources.
   - `log_categories` - (Optional) A set of log categories to send to the log analytics workspace. Defaults to `[]`.
@@ -135,21 +134,22 @@ DESCRIPTION
   nullable    = false
 }
 
-variable "front_end_scale_factor" {
-  type        = number
-  default     = null
-  description = "Scale factor for front-ends. Must be between 5 and 15."
+variable "fips_mode_enabled" {
+  type        = bool
+  default     = false
+  description = "Enable FIPS mode on the App Service Environment (ASE). Enabling this will enforce the use of FIPS compliant ciphers and protocols for Linux: https://learn.microsoft.com/en-us/azure/app-service/environment/app-service-app-service-environment-custom-settings#enable-fips-mode"
+}
 
-  validation {
-    condition     = var.front_end_scale_factor == null || (var.front_end_scale_factor >= 5 && var.front_end_scale_factor <= 15)
-    error_message = "The front_end_scale_factor must be null or between 5 and 15."
-  }
+variable "front_end_tls_cipher_suite_order" {
+  type        = string
+  default     = null
+  description = "The TLS cipher suite order to use on the App Service Environment (ASE). Refer to the docs for valid inputs: https://learn.microsoft.com/en-us/azure/app-service/environment/app-service-app-service-environment-custom-settings#change-tls-cipher-suite-order"
 }
 
 variable "ftp_enabled" {
   type        = bool
-  default     = null
-  description = "Property to enable and disable FTP on ASEV3."
+  default     = false
+  description = "Enable FTP on the App Service Environment (ASE)."
 }
 
 variable "inbound_ip_address_override" {
@@ -158,21 +158,21 @@ variable "inbound_ip_address_override" {
   description = "Customer provided Inbound IP Address. Only able to be set on ASE create."
 }
 
+variable "internal_encryption_enabled" {
+  type        = bool
+  default     = true
+  description = "Enable internal Encryption: https://learn.microsoft.com/en-us/azure/app-service/environment/app-service-app-service-environment-custom-settings#enable-internal-encryption"
+}
+
 variable "internal_load_balancing_mode" {
   type        = string
-  default     = "None"
-  description = "Specifies which endpoints to serve internally in the Virtual Network for the App Service Environment. Possible values are 'None', 'Web', 'Publishing', or 'Web, Publishing'."
+  default     = "Web, Publishing"
+  description = "Specifies which endpoints to serve internally in the Virtual Network for the App Service Environment (ASE). Possible values are 'None', 'Web', 'Publishing', or 'Web, Publishing'."
 
   validation {
     condition     = contains(["None", "Web", "Publishing", "Web, Publishing"], var.internal_load_balancing_mode)
     error_message = "Possible values are 'None', 'Web', 'Publishing', or 'Web, Publishing'."
   }
-}
-
-variable "ipssl_address_count" {
-  type        = number
-  default     = null
-  description = "Number of IP SSL addresses reserved for the App Service Environment."
 }
 
 variable "lock" {
@@ -192,6 +192,21 @@ variable "lock" {
     condition     = var.lock != null ? contains(["CanNotDelete", "ReadOnly"], var.lock.kind) : true
     error_message = "Lock kind must be either `\"CanNotDelete\"` or `\"ReadOnly\"`."
   }
+}
+
+variable "managed_identities" {
+  type = object({
+    system_assigned            = optional(bool, false)
+    user_assigned_resource_ids = optional(set(string), [])
+  })
+  default     = {}
+  description = <<DESCRIPTION
+  Controls the Managed Identity configuration on this resource. The following properties can be specified:
+
+  - `system_assigned` - (Optional) Specifies if the System Assigned Managed Identity should be enabled. Defaults to `false`.
+  - `user_assigned_resource_ids` - (Optional) Specifies a set of User Assigned Managed Identity resource IDs to be assigned to this resource.
+  DESCRIPTION
+  nullable    = false
 }
 
 variable "multi_size" {
@@ -238,7 +253,7 @@ variable "private_endpoint_connections" {
 variable "remote_debug_enabled" {
   type        = bool
   default     = null
-  description = "Property to enable and disable Remote Debug on ASEV3."
+  description = "Enable Remote Debug on the App Service Environment (ASE)."
 }
 
 variable "retry" {
@@ -270,7 +285,7 @@ variable "role_assignments" {
   }))
   default     = {}
   description = <<DESCRIPTION
-  A map of role assignments to create on the App Service Environment. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+  A map of role assignments to create on the App Service Environment (ASE). The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
 
   - `role_definition_id_or_name` - The ID or name of the role definition to assign to the principal.
   - `principal_id` - The ID of the principal to assign the role to.
@@ -301,13 +316,19 @@ variable "timeouts" {
   })
   default     = {}
   description = <<DESCRIPTION
-  Timeouts for resource operations. App Service Environments can take a long time to create and update.
+  Timeouts for resource operations. App Service Environments (ASE) can take a long time to create and update.
 
   - `create` - (Optional) The timeout for create operations. Defaults to '6h'.
   - `delete` - (Optional) The timeout for delete operations. Defaults to '6h'.
   - `read` - (Optional) The timeout for read operations. Defaults to '5m'.
   - `update` - (Optional) The timeout for update operations. Defaults to '6h'.
   DESCRIPTION
+}
+
+variable "tls_1_enabled" {
+  type        = bool
+  default     = false
+  description = "Enable TLS 1.0 on the App Service Environment (ASE): https://learn.microsoft.com/en-us/azure/app-service/environment/app-service-app-service-environment-custom-settings#disable-tls-10-and-tls-11"
 }
 
 variable "upgrade_preference" {
@@ -321,8 +342,8 @@ variable "upgrade_preference" {
   }
 }
 
-variable "zone_redundant" {
+variable "zone_redundancy_enabled" {
   type        = bool
   default     = true
-  description = "Specifies if the App Service Environment is zone redundant. Defaults to true. Zonal ASEs can only be deployed in some regions."
+  description = "Specifies if the App Service Environment (ASE) is zone redundant. Defaults to true. Zonal ASEs can only be deployed in some regions."
 }
