@@ -89,7 +89,7 @@ module "avm_interfaces" {
   source  = "Azure/avm-utl-interfaces/azure"
   version = "0.5.0"
 
-  diagnostic_settings                  = var.diagnostic_settings
+  diagnostic_settings_v2               = var.diagnostic_settings
   enable_telemetry                     = var.enable_telemetry
   lock                                 = var.lock
   role_assignment_definition_scope     = azapi_resource.this.id
@@ -122,6 +122,12 @@ resource "azapi_resource" "lock" {
     read   = var.timeouts.read
     update = var.timeouts.update
   }
+
+  depends_on = [
+    azapi_resource.diagnostic_setting,
+    azapi_resource.role_assignment,
+    module.private_endpoint_connection
+  ]
 }
 
 # Role Assignments using AzAPI
@@ -153,7 +159,7 @@ resource "azapi_resource" "role_assignment" {
 
 # Diagnostic Settings using AzAPI
 resource "azapi_resource" "diagnostic_setting" {
-  for_each = module.avm_interfaces.diagnostic_settings_azapi
+  for_each = module.avm_interfaces.diagnostic_settings_azapi_v2
 
   name                   = each.value.name
   parent_id              = azapi_resource.this.id

@@ -155,9 +155,18 @@ module "test" {
   subnet_id = azapi_resource.subnet.id
   diagnostic_settings = {
     sendToLogAnalytics = {
-      name                           = "sendToLogAnalytics"
-      workspace_resource_id          = azapi_resource.log_analytics_workspace.id
-      log_analytics_destination_type = "Dedicated"
+      name                  = "sendToLogAnalytics"
+      workspace_resource_id = azapi_resource.log_analytics_workspace.id
+      logs = [
+        {
+          category_group = "allLogs"
+          enabled        = true
+        },
+        {
+          category_group = "audit"
+          enabled        = false
+        }
+      ]
     }
   }
   enable_telemetry = var.enable_telemetry # see variables.tf
