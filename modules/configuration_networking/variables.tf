@@ -16,12 +16,6 @@ variable "ftp_enabled" {
   description = "Enable FTP on the App Service Environment (ASE)."
 }
 
-variable "inbound_ip_address_override" {
-  type        = string
-  default     = null
-  description = "Customer provided Inbound IP Address. Only able to be set on ASE create."
-}
-
 variable "kind" {
   type        = string
   default     = null

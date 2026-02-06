@@ -132,10 +132,6 @@ module "test" {
     {
       name  = "DisableTls1.0"
       value = "1"
-    },
-    {
-      name  = "InternalEncryption"
-      value = "true"
     }
   ]
   # Diagnostic settings
@@ -185,6 +181,7 @@ module "test" {
     read   = "5m"
     update = "6h"
   }
+  tls_1_enabled = true # This is set to test the cluster_settings without getting a duplicate setting
   # Upgrade preference
   upgrade_preference = "Early"
   # Zone redundancy

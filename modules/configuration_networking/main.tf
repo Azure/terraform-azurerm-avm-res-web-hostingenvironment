@@ -8,7 +8,6 @@ resource "azapi_resource" "this" {
     properties = {
       allowNewPrivateEndpointConnections = var.allow_new_private_endpoint_connections
       ftpEnabled                         = var.ftp_enabled
-      inboundIpAddressOverride           = var.inbound_ip_address_override
       remoteDebugEnabled                 = var.remote_debug_enabled
     }
   }
