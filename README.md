@@ -395,23 +395,15 @@ Description: The internal inbound IP addresses of the App Service Environment (A
 
 Description: The Linux outbound IP addresses of the App Service Environment (ASE).
 
-### <a name="output_location"></a> [location](#output\_location)
-
-Description: The location of the App Service Environment (ASE).
-
 ### <a name="output_name"></a> [name](#output\_name)
 
 Description: The name of the App Service Environment (ASE).
-
-### <a name="output_private_endpoint_connections"></a> [private\_endpoint\_connections](#output\_private\_endpoint\_connections)
-
-Description: The private endpoint connections created for the App Service Environment (ASE).
 
 ### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 
 Description: The resource ID of the App Service Environment (ASE).
 
-### <a name="output_system_assigned_mi_principal_id"></a> [system\_assigned\_mi\_principal\_id](#output\_system\_assigned\_mi\_principal\_id)
+### <a name="output_system_assigned_managed_identity_principal_id"></a> [system\_assigned\_managed\_identity\_principal\_id](#output\_system\_assigned\_managed\_identity\_principal\_id)
 
 Description: The principal ID of the system-assigned managed identity.
 
