@@ -150,7 +150,6 @@ module "test" {
   }
   enable_telemetry = var.enable_telemetry
   # Front-end configuration
-  front_end_scale_factor       = 15
   ftp_enabled                  = false
   internal_load_balancing_mode = "Web, Publishing"
   # Resource lock
@@ -158,7 +157,6 @@ module "test" {
     kind = "CanNotDelete"
     name = "ase-lock"
   }
-  multi_size           = "Standard_D2d_v4"
   remote_debug_enabled = false
   # Retry configuration
   retry = {

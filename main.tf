@@ -53,16 +53,16 @@ resource "azapi_resource" "this" {
     interval_seconds     = var.retry.interval_seconds
     max_interval_seconds = var.retry.max_interval_seconds
   } : null
-  schema_validation_enabled = true
+  schema_validation_enabled = false
   tags                      = var.tags
   update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   dynamic "identity" {
-    for_each = local.managed_identities.system_assigned || length(local.managed_identities.user_assigned_resource_ids) > 0 ? [1] : []
+    for_each = local.managed_identities.system_assigned_user_assigned
 
     content {
-      type         = local.managed_identities.type
-      identity_ids = local.managed_identities.user_assigned_resource_ids
+      type         = identity.value.type
+      identity_ids = identity.value.user_assigned_resource_ids
     }
   }
   timeouts {

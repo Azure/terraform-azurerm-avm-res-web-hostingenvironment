@@ -209,12 +209,6 @@ variable "managed_identities" {
   nullable    = false
 }
 
-variable "multi_size" {
-  type        = string
-  default     = null
-  description = "Front-end VM size, e.g. 'Medium', 'Large'."
-}
-
 variable "private_endpoint_connections" {
   type = map(object({
     name         = optional(string, null)

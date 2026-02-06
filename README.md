@@ -247,14 +247,6 @@ object({
 
 Default: `{}`
 
-### <a name="input_multi_size"></a> [multi\_size](#input\_multi\_size)
-
-Description: Front-end VM size, e.g. 'Medium', 'Large'.
-
-Type: `string`
-
-Default: `null`
-
 ### <a name="input_private_endpoint_connections"></a> [private\_endpoint\_connections](#input\_private\_endpoint\_connections)
 
 Description:   A map of private endpoint connections to create. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.

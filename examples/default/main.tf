@@ -154,4 +154,7 @@ module "test" {
     }
   }
   enable_telemetry = var.enable_telemetry # see variables.tf
+  managed_identities = {
+    system_assigned = true
+  }
 }
