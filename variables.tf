@@ -223,41 +223,6 @@ variable "managed_identities" {
   nullable    = false
 }
 
-variable "private_endpoint_connections" {
-  type = map(object({
-    name         = optional(string, null)
-    ip_addresses = optional(list(string), [])
-    private_link_service_connection_state = optional(object({
-      actions_required = optional(string, null)
-      description      = optional(string, null)
-      status           = optional(string, "Approved")
-    }), {})
-    timeouts = optional(object({
-      create = optional(string, "30m")
-      delete = optional(string, "30m")
-      read   = optional(string, "5m")
-      update = optional(string, "30m")
-    }), {})
-  }))
-  default     = {}
-  description = <<DESCRIPTION
-  A map of private endpoint connections to create. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
-
-  - `name` - (Optional) The name of the private endpoint connection.
-  - `ip_addresses` - (Optional) A list of IP addresses for the private endpoint.
-  - `private_link_service_connection_state` - (Optional) The state of the private link service connection.
-    - `actions_required` - (Optional) Actions required for the connection.
-    - `description` - (Optional) A description of the connection.
-    - `status` - (Optional) The status of the connection. Defaults to 'Approved'.
-  - `timeouts` - (Optional) Timeouts for the private endpoint connection operations.
-    - `create` - (Optional) Timeout for create operations. Defaults to '30m'.
-    - `delete` - (Optional) Timeout for delete operations. Defaults to '30m'.
-    - `read` - (Optional) Timeout for read operations. Defaults to '5m'.
-    - `update` - (Optional) Timeout for update operations. Defaults to '30m'.
-  DESCRIPTION
-  nullable    = false
-}
-
 variable "remote_debug_enabled" {
   type        = bool
   default     = null

@@ -1,9 +1,0 @@
-output "name" {
-  description = "The name of the private endpoint connection."
-  value       = azapi_resource.this.name
-}
-
-output "resource_id" {
-  description = "The resource ID of the private endpoint connection."
-  value       = azapi_resource.this.id
-}

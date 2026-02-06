@@ -261,44 +261,6 @@ object({
 
 Default: `{}`
 
-### <a name="input_private_endpoint_connections"></a> [private\_endpoint\_connections](#input\_private\_endpoint\_connections)
-
-Description:   A map of private endpoint connections to create. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
-
-  - `name` - (Optional) The name of the private endpoint connection.
-  - `ip_addresses` - (Optional) A list of IP addresses for the private endpoint.
-  - `private_link_service_connection_state` - (Optional) The state of the private link service connection.
-    - `actions_required` - (Optional) Actions required for the connection.
-    - `description` - (Optional) A description of the connection.
-    - `status` - (Optional) The status of the connection. Defaults to 'Approved'.
-  - `timeouts` - (Optional) Timeouts for the private endpoint connection operations.
-    - `create` - (Optional) Timeout for create operations. Defaults to '30m'.
-    - `delete` - (Optional) Timeout for delete operations. Defaults to '30m'.
-    - `read` - (Optional) Timeout for read operations. Defaults to '5m'.
-    - `update` - (Optional) Timeout for update operations. Defaults to '30m'.
-
-Type:
-
-```hcl
-map(object({
-    name         = optional(string, null)
-    ip_addresses = optional(list(string), [])
-    private_link_service_connection_state = optional(object({
-      actions_required = optional(string, null)
-      description      = optional(string, null)
-      status           = optional(string, "Approved")
-    }), {})
-    timeouts = optional(object({
-      create = optional(string, "30m")
-      delete = optional(string, "30m")
-      read   = optional(string, "5m")
-      update = optional(string, "30m")
-    }), {})
-  }))
-```
-
-Default: `{}`
-
 ### <a name="input_remote_debug_enabled"></a> [remote\_debug\_enabled](#input\_remote\_debug\_enabled)
 
 Description: Enable Remote Debug on the App Service Environment (ASE).
@@ -466,12 +428,6 @@ The following Modules are called:
 Source: Azure/avm-utl-interfaces/azure
 
 Version: 0.5.0
-
-### <a name="module_private_endpoint_connection"></a> [private\_endpoint\_connection](#module\_private\_endpoint\_connection)
-
-Source: ./modules/private_endpoint_connection
-
-Version:
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection

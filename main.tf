@@ -125,8 +125,7 @@ resource "azapi_resource" "lock" {
 
   depends_on = [
     azapi_resource.diagnostic_setting,
-    azapi_resource.role_assignment,
-    module.private_endpoint_connection
+    azapi_resource.role_assignment
   ]
 }
 
@@ -182,18 +181,6 @@ resource "azapi_resource" "diagnostic_setting" {
     read   = var.timeouts.read
     update = var.timeouts.update
   }
-}
-
-# Private Endpoint Connections submodule
-module "private_endpoint_connection" {
-  source   = "./modules/private_endpoint_connection"
-  for_each = var.private_endpoint_connections
-
-  hosting_environment_id                = azapi_resource.this.id
-  name                                  = coalesce(each.value.name, each.key)
-  ip_addresses                          = each.value.ip_addresses
-  private_link_service_connection_state = each.value.private_link_service_connection_state
-  timeouts                              = each.value.timeouts
 }
 
 # Moved blocks for migration from azurerm provider to azapi provider
