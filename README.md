@@ -281,13 +281,13 @@ Type:
 
 ```hcl
 object({
-    error_message_regex  = optional(list(string), null)
+    error_message_regex  = optional(list(string), ["ScopeLocked"])
     interval_seconds     = optional(number, null)
     max_interval_seconds = optional(number, null)
   })
 ```
 
-Default: `null`
+Default: `{}`
 
 ### <a name="input_role_assignments"></a> [role\_assignments](#input\_role\_assignments)
 

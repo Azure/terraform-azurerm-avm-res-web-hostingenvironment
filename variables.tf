@@ -231,11 +231,11 @@ variable "remote_debug_enabled" {
 
 variable "retry" {
   type = object({
-    error_message_regex  = optional(list(string), null)
+    error_message_regex  = optional(list(string), ["ScopeLocked"])
     interval_seconds     = optional(number, null)
     max_interval_seconds = optional(number, null)
   })
-  default     = null
+  default     = {}
   description = <<DESCRIPTION
   Retry configuration for transient errors. The following properties can be specified:
 
@@ -243,6 +243,7 @@ variable "retry" {
   - `interval_seconds` - (Optional) The initial interval in seconds between retries.
   - `max_interval_seconds` - (Optional) The maximum interval in seconds between retries.
   DESCRIPTION
+  nullable    = false
 }
 
 variable "role_assignments" {

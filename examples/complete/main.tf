@@ -149,16 +149,26 @@ module "test" {
           enabled        = false
         }
       ]
+      metrics = [
+        {
+          category = "AllMetrics"
+          enabled  = false
+        }
+      ]
     }
   }
   enable_telemetry = var.enable_telemetry
   # Front-end configuration
   ftp_enabled                  = false
+  inbound_ip_address_override  = cidrhost(azapi_resource.subnet.properties.addressPrefix, 100)
   internal_load_balancing_mode = "Web, Publishing"
   # Resource lock
   lock = {
     kind = "CanNotDelete"
     name = "ase-lock"
+  }
+  managed_identities = {
+    system_assigned = true
   }
   remote_debug_enabled = false
   # Retry configuration
