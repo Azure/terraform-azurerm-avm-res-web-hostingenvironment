@@ -179,7 +179,7 @@ module "test" {
   enable_telemetry = var.enable_telemetry
   # Front-end configuration
   ftp_enabled                  = false
-  inbound_ip_address_override  = cidrhost(azapi_resource.subnet.properties.addressPrefix, 100)
+  inbound_ip_address_override  = cidrhost(azapi_resource.subnet.output.addressPrefix, 100)
   internal_load_balancing_mode = "Web, Publishing"
   # Resource lock
   lock = {
