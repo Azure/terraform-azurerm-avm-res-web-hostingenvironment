@@ -8,7 +8,7 @@ terraform {
     }
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 4.0"
+      version = ">= 3.0.0"
     }
     random = {
       source  = "hashicorp/random"
@@ -17,15 +17,13 @@ terraform {
   }
 }
 
+provider "azapi" {}
+
 provider "azurerm" {
   features {}
 }
 
-provider "azapi" {}
-
-
 ## Section to provide a random Azure region for the resource group
-# This allows us to randomize the region for the resource group.
 locals {
   locations = [
     "eastus",
@@ -38,13 +36,11 @@ locals {
     "japaneast",
   ]
 }
-# This allows us to randomize the region for the resource group.
+
 resource "random_integer" "region_index" {
   max = length(local.locations) - 1
   min = 0
 }
-
-## End of section to provide a random Azure region for the resource group
 
 # This ensures we have unique CAF compliant names for our resources.
 module "naming" {
@@ -64,11 +60,6 @@ resource "azapi_resource" "resource_group" {
   body     = {}
 }
 
-moved {
-  from = azurerm_resource_group.this
-  to   = azapi_resource.resource_group
-}
-
 # Log Analytics Workspace using AzAPI
 resource "azapi_resource" "log_analytics_workspace" {
   location  = azapi_resource.resource_group.location
@@ -86,15 +77,10 @@ resource "azapi_resource" "log_analytics_workspace" {
   response_export_values = ["*"]
 }
 
-moved {
-  from = azurerm_log_analytics_workspace.this
-  to   = azapi_resource.log_analytics_workspace
-}
-
 # Virtual Network using AzAPI
 resource "azapi_resource" "virtual_network" {
   location  = azapi_resource.resource_group.location
-  name      = "example_virtual_network"
+  name      = module.naming.virtual_network.name_unique
   parent_id = azapi_resource.resource_group.id
   type      = "Microsoft.Network/virtualNetworks@2024-01-01"
   body = {
@@ -107,14 +93,9 @@ resource "azapi_resource" "virtual_network" {
   response_export_values = ["*"]
 }
 
-moved {
-  from = azurerm_virtual_network.example_virtual_network
-  to   = azapi_resource.virtual_network
-}
-
 # Subnet using AzAPI with delegation to App Service Environment
 resource "azapi_resource" "subnet" {
-  name      = "example_subnet"
+  name      = "ase-subnet"
   parent_id = azapi_resource.virtual_network.id
   type      = "Microsoft.Network/virtualNetworks/subnets@2024-01-01"
   body = {
@@ -122,7 +103,7 @@ resource "azapi_resource" "subnet" {
       addressPrefix = "10.0.1.0/24"
       delegations = [
         {
-          name = "example-delegation"
+          name = "ase-delegation"
           properties = {
             serviceName = "Microsoft.Web/hostingEnvironments"
           }
@@ -133,18 +114,93 @@ resource "azapi_resource" "subnet" {
   response_export_values = ["*"]
 }
 
-moved {
-  from = azurerm_subnet.example_subnet
-  to   = azapi_resource.subnet
-}
+# Get current user/service principal for role assignment
+data "azurerm_client_config" "current" {}
 
-# This is the module call
+# This is the module call with all available settings
 module "test" {
   source = "../../"
 
-  location         = azapi_resource.resource_group.location
-  name             = module.naming.app_service_environment.name_unique
-  parent_id        = azapi_resource.resource_group.id
-  subnet_id        = azapi_resource.subnet.id
+  location  = azapi_resource.resource_group.location
+  name      = module.naming.app_service_environment.name_unique
+  parent_id = azapi_resource.resource_group.id
+  subnet_id = azapi_resource.subnet.id
+  # Networking configuration
+  allow_new_private_endpoint_connections = true
+  # Cluster settings
+  cluster_settings = [
+    {
+      name  = "DisableTls1.0"
+      value = "1"
+    }
+  ]
+  # Diagnostic settings
+  diagnostic_settings = {
+    sendToLogAnalytics = {
+      name                  = "sendToLogAnalytics"
+      workspace_resource_id = azapi_resource.log_analytics_workspace.id
+      logs = [
+        {
+          category_group = "allLogs"
+          enabled        = true
+        },
+        {
+          category_group = "audit"
+          enabled        = false
+        }
+      ]
+      metrics = [
+        {
+          category = "AllMetrics"
+          enabled  = false
+        }
+      ]
+    }
+  }
   enable_telemetry = var.enable_telemetry
+  # Front-end configuration
+  ftp_enabled                  = false
+  inbound_ip_address_override  = "10.0.1.100"
+  internal_load_balancing_mode = "Web, Publishing"
+  # Resource lock
+  lock = {
+    kind = "CanNotDelete"
+    name = "ase-lock"
+  }
+  managed_identities = {
+    system_assigned = true
+  }
+  remote_debug_enabled = false
+  # Retry configuration
+  retry = {
+    error_message_regex  = ["InternalServerError", "ServiceUnavailable"]
+    interval_seconds     = 10
+    max_interval_seconds = 300
+  }
+  # Role assignments
+  role_assignments = {
+    reader = {
+      role_definition_id_or_name = "Reader"
+      principal_id               = data.azurerm_client_config.current.object_id
+      principal_type             = "ServicePrincipal"
+    }
+  }
+  # Tags
+  tags = {
+    Environment = "Production"
+    CostCenter  = "IT"
+    Project     = "ASE-Complete"
+  }
+  # Timeouts
+  timeouts = {
+    create = "6h"
+    delete = "6h"
+    read   = "5m"
+    update = "6h"
+  }
+  tls_1_enabled = true # This is set to test the cluster_settings without getting a duplicate setting
+  # Upgrade preference
+  upgrade_preference = "Early"
+  # Zone redundancy
+  zone_redundancy_enabled = true
 }

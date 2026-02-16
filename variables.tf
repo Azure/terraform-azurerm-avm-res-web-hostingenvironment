@@ -1,72 +1,103 @@
+variable "location" {
+  type        = string
+  description = "The Azure region where the App Service Environment (ASE) will be deployed."
+  nullable    = false
+}
+
 variable "name" {
   type        = string
-  description = "The name of the this resource."
+  description = "The name of this resource."
 
   validation {
-    condition     = can(regex("^[a-z0-9-]{1,60}$", var.name))
-    error_message = "The name of the this resource."
+    condition     = can(regex("^[a-zA-Z0-9-]{1,60}$", var.name))
+    error_message = "The name must be 1-60 characters long and contain only alphanumeric characters and hyphens."
   }
 }
 
-# This is required for most resource modules
-variable "resource_group_name" {
+variable "parent_id" {
   type        = string
-  description = "The resource group where the resources will be deployed."
+  description = "The resource ID of the resource group where the App Service Environment (ASE) will be deployed."
+  nullable    = false
+
+  validation {
+    condition     = can(provider::azapi::parse_resource_id("Microsoft.Resources/resourceGroups", var.parent_id))
+    error_message = "The parent_id must be a valid Azure resource group resource ID."
+  }
 }
 
 variable "subnet_id" {
   type        = string
-  description = "The ID of the Subnet which the App Service Environment should be connected to."
+  description = "The ID of the Subnet which the App Service Environment (ASE) should be connected to. The subnet must be delegated to Microsoft.Web/hostingEnvironments."
+
+  validation {
+    condition     = can(provider::azapi::parse_resource_id("Microsoft.Network/virtualNetworks/subnets", var.subnet_id))
+    error_message = "The subnet_id must be a valid Azure subnet resource ID."
+  }
 }
 
 variable "allow_new_private_endpoint_connections" {
   type        = bool
-  default     = null
-  description = "Should new Private Endpoint Connections be allowed. Defaults to true."
+  default     = true
+  description = "Enable new private endpoint connection creation on the App Service Environment (ASE). Defaults to true."
 }
 
-variable "cluster_setting" {
-  type = map(object({
-    name  = optional(string, null)
-    value = optional(string, null)
+variable "cluster_settings" {
+  type = list(object({
+    name  = string
+    value = string
   }))
-  default     = {}
-  description = "You can store App Service Environment customizations by using an array in the new clusterSettings attribute. This attribute is found in the ''Properties'' dictionary of the hostingEnvironments Azure Resource Manager entity."
+  default     = []
+  description = "Custom settings for changing the behavior of the App Service Environment (ASE). These settings are stored in the clusterSettings attribute of the hostingEnvironments Azure Resource Manager entity."
+  nullable    = false
 }
 
-# required AVM interfaces
-# remove only if not supported by the resource
-# tflint-ignore: terraform_unused_declarations
-variable "customer_managed_key" {
+variable "custom_dns_suffix_configuration" {
   type = object({
-    key_vault_resource_id = string
-    key_name              = string
-    key_version           = optional(string, null)
-    user_assigned_identity = optional(object({
-      resource_id = string
-    }), null)
+    certificate_url              = string
+    dns_suffix                   = string
+    key_vault_reference_identity = optional(string, null)
   })
   default     = null
-  description = "Customer managed keys that should be associated with the resource."
+  description = <<DESCRIPTION
+  Custom domain suffix configuration for the App Service Environment (ASE). The following properties can be specified:
+
+  - `certificate_url` - (Required) The URL referencing the Azure Key Vault certificate secret that should be used as the default SSL/TLS certificate for sites with the custom domain suffix.
+  - `dns_suffix` - (Required) The default custom domain suffix to use for all sites deployed on the ASE.
+  - `key_vault_reference_identity` - (Optional) The user-assigned identity to use for resolving the key vault certificate reference. If not specified, the system-assigned ASE identity will be used if available.
+  DESCRIPTION
 }
 
 variable "dedicated_host_count" {
   type        = number
   default     = null
-  description = "This ASEv3 should use dedicated Hosts. Possible values are 2"
+  description = "Dedicated Host Count for the App Service Environment (ASE). Possible value is 2. Setting this value will make the ASE use dedicated hosts."
 
   validation {
-    condition     = can(var.dedicated_host_count == 2)
-    error_message = "The number of dedicated hosts must be 2."
+    condition     = var.dedicated_host_count == null || var.dedicated_host_count == 2
+    error_message = "The number of dedicated hosts must be null or 2."
   }
 }
 
 variable "diagnostic_settings" {
   type = map(object({
-    name                                     = optional(string, null)
-    log_categories                           = optional(set(string), [])
-    log_groups                               = optional(set(string), ["allLogs"])
-    metric_categories                        = optional(set(string), ["AllMetrics"])
+    name = optional(string, null)
+    logs = optional(set(object({
+      category       = optional(string, null)
+      category_group = optional(string, null)
+      enabled        = optional(bool, true)
+      retention_policy = optional(object({
+        days    = optional(number, 0)
+        enabled = optional(bool, false)
+      }), {})
+    })), [])
+    metrics = optional(set(object({
+      category = optional(string, null)
+      enabled  = optional(bool, true)
+      retention_policy = optional(object({
+        days    = optional(number, 0)
+        enabled = optional(bool, false)
+      }), {})
+    })), [])
     log_analytics_destination_type           = optional(string, "Dedicated")
     workspace_resource_id                    = optional(string, null)
     storage_account_resource_id              = optional(string, null)
@@ -76,7 +107,7 @@ variable "diagnostic_settings" {
   }))
   default     = {}
   description = <<DESCRIPTION
-  A map of diagnostic settings to create on the Key Vault. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+  A map of diagnostic settings to create on the App Service Environment (ASE). The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
 
   - `name` - (Optional) The name of the diagnostic setting. One will be generated if not set, however this will not be unique if you want to create multiple diagnostic setting resources.
   - `log_categories` - (Optional) A set of log categories to send to the log analytics workspace. Defaults to `[]`.
@@ -87,7 +118,7 @@ variable "diagnostic_settings" {
   - `storage_account_resource_id` - (Optional) The resource ID of the storage account to send logs and metrics to.
   - `event_hub_authorization_rule_resource_id` - (Optional) The resource ID of the event hub authorization rule to send logs and metrics to.
   - `event_hub_name` - (Optional) The name of the event hub. If none is specified, the default event hub will be selected.
-  - `marketplace_partner_resource_id` - (Optional) The full ARM resource ID of the Marketplace resource to which you would like to send Diagnostic LogsLogs.
+  - `marketplace_partner_resource_id` - (Optional) The full ARM resource ID of the Marketplace resource to which you would like to send Diagnostic Logs.
   DESCRIPTION
   nullable    = false
 
@@ -117,14 +148,44 @@ DESCRIPTION
   nullable    = false
 }
 
+variable "fips_mode_enabled" {
+  type        = bool
+  default     = false
+  description = "Enable FIPS mode on the App Service Environment (ASE). Enabling this will enforce the use of FIPS compliant ciphers and protocols for Linux: https://learn.microsoft.com/en-us/azure/app-service/environment/app-service-app-service-environment-custom-settings#enable-fips-mode"
+}
+
+variable "front_end_tls_cipher_suite_order" {
+  type        = string
+  default     = null
+  description = "The TLS cipher suite order to use on the App Service Environment (ASE). Refer to the docs for valid inputs: https://learn.microsoft.com/en-us/azure/app-service/environment/app-service-app-service-environment-custom-settings#change-tls-cipher-suite-order"
+}
+
+variable "ftp_enabled" {
+  type        = bool
+  default     = false
+  description = "Enable FTP on the App Service Environment (ASE)."
+}
+
+variable "inbound_ip_address_override" {
+  type        = string
+  default     = null
+  description = "Customer provided Inbound IP Address. Only able to be set on ASE create."
+}
+
+variable "internal_encryption_enabled" {
+  type        = bool
+  default     = true
+  description = "Enable internal Encryption: https://learn.microsoft.com/en-us/azure/app-service/environment/app-service-app-service-environment-custom-settings#enable-internal-encryption"
+}
+
 variable "internal_load_balancing_mode" {
   type        = string
-  default     = "None"
-  description = " Specifies which endpoints to serve internally in the Virtual Network for the App Service Environment."
+  default     = "Web, Publishing"
+  description = "Specifies which endpoints to serve internally in the Virtual Network for the App Service Environment (ASE). Possible values are 'None', 'Web', 'Publishing', or 'Web, Publishing'."
 
   validation {
-    condition     = can(regex("None|Web, Publishing", var.internal_load_balancing_mode))
-    error_message = "Possibile values are 'None' or the combined value of 'Web, Publishing'."
+    condition     = contains(["None", "Web", "Publishing", "Web, Publishing"], var.internal_load_balancing_mode)
+    error_message = "Possible values are 'None', 'Web', 'Publishing', or 'Web, Publishing'."
   }
 }
 
@@ -137,7 +198,7 @@ variable "lock" {
   description = <<DESCRIPTION
   Controls the Resource Lock configuration for this resource. The following properties can be specified:
 
-  - `kind` - (Required) The type of lock. Possible values are `\"CanNotDelete\"` and `\"ReadOnly\"`.
+  - `kind` - (Required) The type of lock. Possible values are `"CanNotDelete"` and `"ReadOnly"`.
   - `name` - (Optional) The name of the lock. If not specified, a name will be generated based on the `kind` value. Changing this forces the creation of a new resource.
   DESCRIPTION
 
@@ -147,21 +208,42 @@ variable "lock" {
   }
 }
 
-# tflint-ignore: terraform_unused_declarations
 variable "managed_identities" {
   type = object({
     system_assigned            = optional(bool, false)
     user_assigned_resource_ids = optional(set(string), [])
   })
   default     = {}
-  description = "Managed identities to be created for the resource."
+  description = <<DESCRIPTION
+  Controls the Managed Identity configuration on this resource. The following properties can be specified:
+
+  - `system_assigned` - (Optional) Specifies if the System Assigned Managed Identity should be enabled. Defaults to `false`.
+  - `user_assigned_resource_ids` - (Optional) Specifies a set of User Assigned Managed Identity resource IDs to be assigned to this resource.
+  DESCRIPTION
   nullable    = false
 }
 
-variable "remote_debugging_enabled" {
+variable "remote_debug_enabled" {
   type        = bool
   default     = null
-  description = "Specifies if remote debugging is enabled. Defaults to false."
+  description = "Enable Remote Debug on the App Service Environment (ASE)."
+}
+
+variable "retry" {
+  type = object({
+    error_message_regex  = optional(list(string), ["ScopeLocked"])
+    interval_seconds     = optional(number, null)
+    max_interval_seconds = optional(number, null)
+  })
+  default     = {}
+  description = <<DESCRIPTION
+  Retry configuration for transient errors. The following properties can be specified:
+
+  - `error_message_regex` - (Optional) A list of regular expressions to match against error messages. If any match, the operation will be retried.
+  - `interval_seconds` - (Optional) The initial interval in seconds between retries.
+  - `max_interval_seconds` - (Optional) The maximum interval in seconds between retries.
+  DESCRIPTION
+  nullable    = false
 }
 
 variable "role_assignments" {
@@ -177,7 +259,7 @@ variable "role_assignments" {
   }))
   default     = {}
   description = <<DESCRIPTION
-  A map of role assignments to create on the <RESOURCE>. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+  A map of role assignments to create on the App Service Environment (ASE). The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
 
   - `role_definition_id_or_name` - The ID or name of the role definition to assign to the principal.
   - `principal_id` - The ID of the principal to assign the role to.
@@ -193,15 +275,49 @@ variable "role_assignments" {
   nullable    = false
 }
 
-# tflint-ignore: terraform_unused_declarations
 variable "tags" {
   type        = map(string)
   default     = null
   description = "(Optional) Tags of the resource."
 }
 
-variable "zone_redundant" {
+variable "timeouts" {
+  type = object({
+    create = optional(string, "6h")
+    delete = optional(string, "6h")
+    read   = optional(string, "5m")
+    update = optional(string, "6h")
+  })
+  default     = {}
+  description = <<DESCRIPTION
+  Timeouts for resource operations. App Service Environments (ASE) can take a long time to create and update.
+
+  - `create` - (Optional) The timeout for create operations. Defaults to '6h'.
+  - `delete` - (Optional) The timeout for delete operations. Defaults to '6h'.
+  - `read` - (Optional) The timeout for read operations. Defaults to '5m'.
+  - `update` - (Optional) The timeout for update operations. Defaults to '6h'.
+  DESCRIPTION
+}
+
+variable "tls_1_enabled" {
+  type        = bool
+  default     = false
+  description = "Enable TLS 1.0 on the App Service Environment (ASE): https://learn.microsoft.com/en-us/azure/app-service/environment/app-service-app-service-environment-custom-settings#disable-tls-10-and-tls-11"
+}
+
+variable "upgrade_preference" {
+  type        = string
+  default     = "None"
+  description = "Upgrade Preference. Possible values are 'None', 'Early', 'Late', or 'Manual'."
+
+  validation {
+    condition     = contains(["None", "Early", "Late", "Manual"], var.upgrade_preference)
+    error_message = "Possible values are 'None', 'Early', 'Late', or 'Manual'."
+  }
+}
+
+variable "zone_redundancy_enabled" {
   type        = bool
   default     = true
-  description = "Specifies if the App Service Environment is zone redundant. Defaults to true. Zonal ASEs can only be deployed in some regions"
+  description = "Specifies if the App Service Environment (ASE) is zone redundant. Defaults to true. Zonal ASEs can only be deployed in some regions."
 }
