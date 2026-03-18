@@ -7,14 +7,7 @@ resource "azapi_resource" "this" {
   body = {
     kind = "ASEV3"
     properties = {
-      clusterSettings = local.cluster_settings
-      customDnsSuffixConfiguration = var.custom_dns_suffix_configuration != null ? {
-        properties = {
-          certificateUrl            = var.custom_dns_suffix_configuration.certificate_url
-          dnsSuffix                 = var.custom_dns_suffix_configuration.dns_suffix
-          keyVaultReferenceIdentity = var.custom_dns_suffix_configuration.key_vault_reference_identity
-        }
-      } : null
+      clusterSettings            = local.cluster_settings
       dedicatedHostCount        = var.dedicated_host_count == null ? 0 : var.dedicated_host_count
       dnsSuffix                 = null
       frontEndScaleFactor       = null
@@ -23,10 +16,7 @@ resource "azapi_resource" "this" {
       multiSize                 = null
       networkingConfiguration = {
         properties = {
-          allowNewPrivateEndpointConnections = var.allow_new_private_endpoint_connections
-          ftpEnabled                         = var.ftp_enabled
-          inboundIpAddressOverride           = var.inbound_ip_address_override
-          remoteDebugEnabled                 = var.remote_debug_enabled
+          inboundIpAddressOverride = var.inbound_ip_address_override
         }
       }
       upgradePreference       = var.upgrade_preference
@@ -42,11 +32,7 @@ resource "azapi_resource" "this" {
   delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   response_export_values = [
-    "properties.dnsSuffix",
-    "properties.networkingConfiguration.properties.externalInboundIpAddresses",
-    "properties.networkingConfiguration.properties.internalInboundIpAddresses",
-    "properties.networkingConfiguration.properties.linuxOutboundIpAddresses",
-    "properties.networkingConfiguration.properties.windowsOutboundIpAddresses"
+    "properties.dnsSuffix"
   ]
   retry = var.retry != null ? {
     error_message_regex  = var.retry.error_message_regex
@@ -74,10 +60,12 @@ resource "azapi_resource" "this" {
 
   lifecycle {
     ignore_changes = [
+      body.properties.customDnsSuffixConfiguration,
       body.properties.dnsSuffix,
       body.properties.frontEndScaleFactor,
       body.properties.ipsslAddressCount,
       body.properties.multiSize,
+      body.properties.networkingConfiguration,
       body.properties.userWhitelistedIpRanges,
       body.properties.virtualNetwork.subnet
     ]
@@ -184,6 +172,34 @@ resource "azapi_resource" "diagnostic_setting" {
 }
 
 # Moved blocks for migration from azurerm provider to azapi provider
+
+# Custom DNS Suffix Configuration - applied as a separate update after ASE creation
+# because this property is read-only at create time.
+module "custom_dns_suffix_configuration" {
+  source = "./modules/custom_dns_suffix_configuration"
+  count  = var.custom_dns_suffix_configuration != null ? 1 : 0
+
+  hosting_environment_resource_id = azapi_resource.this.id
+  certificate_url                 = var.custom_dns_suffix_configuration.certificate_url
+  dns_suffix                      = var.custom_dns_suffix_configuration.dns_suffix
+  key_vault_reference_identity    = var.custom_dns_suffix_configuration.key_vault_reference_identity
+
+  depends_on = [azapi_resource.this]
+}
+
+# Networking Configuration - applied as a separate update after ASE creation
+# because these properties are read-only at create time.
+module "networking_configuration" {
+  source = "./modules/networking_configuration"
+
+  hosting_environment_resource_id        = azapi_resource.this.id
+  allow_new_private_endpoint_connections = var.allow_new_private_endpoint_connections
+  ftp_enabled                            = var.ftp_enabled
+  remote_debug_enabled                   = var.remote_debug_enabled
+
+  depends_on = [azapi_resource.this]
+}
+
 moved {
   from = azurerm_app_service_environment_v3.this
   to   = azapi_resource.this
