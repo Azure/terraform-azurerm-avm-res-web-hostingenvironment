@@ -5,17 +5,17 @@ output "dns_suffix" {
 
 output "external_inbound_ip_addresses" {
   description = "The external inbound IP addresses of the App Service Environment (ASE)."
-  value       = try(azapi_resource.this.output.properties.networkingConfiguration.properties.externalInboundIpAddresses, [])
+  value       = module.networking_configuration.external_inbound_ip_addresses
 }
 
 output "internal_inbound_ip_addresses" {
   description = "The internal inbound IP addresses of the App Service Environment (ASE)."
-  value       = try(azapi_resource.this.output.properties.networkingConfiguration.properties.internalInboundIpAddresses, [])
+  value       = module.networking_configuration.internal_inbound_ip_addresses
 }
 
 output "linux_outbound_ip_addresses" {
   description = "The Linux outbound IP addresses of the App Service Environment (ASE)."
-  value       = try(azapi_resource.this.output.properties.networkingConfiguration.properties.linuxOutboundIpAddresses, [])
+  value       = module.networking_configuration.linux_outbound_ip_addresses
 }
 
 output "name" {
@@ -35,5 +35,5 @@ output "system_assigned_managed_identity_principal_id" {
 
 output "windows_outbound_ip_addresses" {
   description = "The Windows outbound IP addresses of the App Service Environment (ASE)."
-  value       = try(azapi_resource.this.output.properties.networkingConfiguration.properties.windowsOutboundIpAddresses, [])
+  value       = module.networking_configuration.windows_outbound_ip_addresses
 }

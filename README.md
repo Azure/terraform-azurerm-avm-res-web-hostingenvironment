@@ -421,6 +421,18 @@ Source: Azure/avm-utl-interfaces/azure
 
 Version: 0.5.0
 
+### <a name="module_custom_dns_suffix_configuration"></a> [custom\_dns\_suffix\_configuration](#module\_custom\_dns\_suffix\_configuration)
+
+Source: ./modules/custom_dns_suffix_configuration
+
+Version:
+
+### <a name="module_networking_configuration"></a> [networking\_configuration](#module\_networking\_configuration)
+
+Source: ./modules/networking_configuration
+
+Version:
+
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection
 
