@@ -2,9 +2,9 @@
 # This uses azapi_update_resource because networking configuration properties
 # are read-only at ASE create time and must be set via a separate update.
 resource "azapi_update_resource" "networking" {
-  type      = "Microsoft.Web/hostingEnvironments/configurations@2025-03-01"
   name      = "networking"
   parent_id = var.hosting_environment_resource_id
+  type      = "Microsoft.Web/hostingEnvironments/configurations@2025-03-01"
   body = {
     properties = {
       allowNewPrivateEndpointConnections = var.allow_new_private_endpoint_connections

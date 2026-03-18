@@ -7,7 +7,7 @@ resource "azapi_resource" "this" {
   body = {
     kind = "ASEV3"
     properties = {
-      clusterSettings            = local.cluster_settings
+      clusterSettings           = local.cluster_settings
       dedicatedHostCount        = var.dedicated_host_count == null ? 0 : var.dedicated_host_count
       dnsSuffix                 = null
       frontEndScaleFactor       = null
@@ -179,9 +179,9 @@ module "custom_dns_suffix_configuration" {
   source = "./modules/custom_dns_suffix_configuration"
   count  = var.custom_dns_suffix_configuration != null ? 1 : 0
 
-  hosting_environment_resource_id = azapi_resource.this.id
   certificate_url                 = var.custom_dns_suffix_configuration.certificate_url
   dns_suffix                      = var.custom_dns_suffix_configuration.dns_suffix
+  hosting_environment_resource_id = azapi_resource.this.id
   key_vault_reference_identity    = var.custom_dns_suffix_configuration.key_vault_reference_identity
 
   depends_on = [azapi_resource.this]
