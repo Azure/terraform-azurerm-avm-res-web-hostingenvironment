@@ -51,6 +51,7 @@ resource "azapi_resource" "this" {
       identity_ids = identity.value.user_assigned_resource_ids
     }
   }
+
   timeouts {
     create = var.timeouts.create
     delete = var.timeouts.delete
@@ -75,14 +76,13 @@ resource "azapi_resource" "this" {
 # AVM Interfaces Module - handles diagnostic settings, locks, role assignments
 module "avm_interfaces" {
   source  = "Azure/avm-utl-interfaces/azure"
-  version = "0.5.0"
+  version = "0.6.0"
 
-  diagnostic_settings_v2               = var.diagnostic_settings
-  enable_telemetry                     = var.enable_telemetry
-  lock                                 = var.lock
-  role_assignment_definition_scope     = azapi_resource.this.id
-  role_assignment_name_use_random_uuid = true
-  role_assignments                     = var.role_assignments
+  diagnostic_settings_v2           = var.diagnostic_settings
+  enable_telemetry                 = var.enable_telemetry
+  lock                             = var.lock
+  role_assignment_definition_scope = azapi_resource.this.id
+  role_assignments                 = var.role_assignments
 }
 
 # Resource Lock using AzAPI
