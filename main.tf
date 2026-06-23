@@ -78,12 +78,11 @@ module "avm_interfaces" {
   source  = "Azure/avm-utl-interfaces/azure"
   version = "0.6.0"
 
-  diagnostic_settings_v2               = var.diagnostic_settings
-  enable_telemetry                     = var.enable_telemetry
-  lock                                 = var.lock
-  role_assignment_definition_scope     = azapi_resource.this.id
-  role_assignments                     = var.role_assignments
-  role_assignment_name_use_random_uuid = true
+  diagnostic_settings_v2           = var.diagnostic_settings
+  enable_telemetry                 = var.enable_telemetry
+  lock                             = var.lock
+  role_assignment_definition_scope = azapi_resource.this.id
+  role_assignments                 = var.role_assignments
 }
 
 # Resource Lock using AzAPI
