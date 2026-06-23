@@ -51,6 +51,7 @@ resource "azapi_resource" "this" {
       identity_ids = identity.value.user_assigned_resource_ids
     }
   }
+
   timeouts {
     create = var.timeouts.create
     delete = var.timeouts.delete
@@ -81,8 +82,8 @@ module "avm_interfaces" {
   enable_telemetry                     = var.enable_telemetry
   lock                                 = var.lock
   role_assignment_definition_scope     = azapi_resource.this.id
-  role_assignment_name_use_random_uuid = true
   role_assignments                     = var.role_assignments
+  role_assignment_name_use_random_uuid = true
 }
 
 # Resource Lock using AzAPI
