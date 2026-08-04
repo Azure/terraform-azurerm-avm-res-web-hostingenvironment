@@ -15,7 +15,7 @@ terraform {
     }
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 4.0"
+      version = ">= 4.0, < 6.0"
     }
     random = {
       source  = "hashicorp/random"
@@ -25,6 +25,8 @@ terraform {
 }
 
 provider "azurerm" {
+  resource_providers_to_register = ["Microsoft.Network", "Microsoft.OperationalInsights", "Microsoft.Web"]
+
   features {}
 }
 
@@ -166,7 +168,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.4)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 4.0, < 6.0)
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (>= 3.6.0, < 4.0.0)
 
