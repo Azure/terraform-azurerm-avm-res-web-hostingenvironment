@@ -173,7 +173,7 @@ module "test" {
   remote_debug_enabled = false
   # Retry configuration
   retry = {
-    error_message_regex  = ["InternalServerError", "ServiceUnavailable"]
+    error_message_regex  = ["InternalServerError", "ScopeLocked", "ServiceUnavailable"]
     interval_seconds     = 10
     max_interval_seconds = 300
   }
