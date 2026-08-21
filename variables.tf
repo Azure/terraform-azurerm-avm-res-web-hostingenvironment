@@ -225,8 +225,9 @@ variable "managed_identities" {
 
 variable "remote_debug_enabled" {
   type        = bool
-  default     = null
-  description = "Enable Remote Debug on the App Service Environment (ASE)."
+  default     = false
+  description = "Enable Remote Debug on the App Service Environment (ASE). Defaults to false."
+  nullable    = false
 }
 
 variable "retry" {
