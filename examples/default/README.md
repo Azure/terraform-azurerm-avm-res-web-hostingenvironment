@@ -32,7 +32,6 @@ provider "azurerm" {
 
 provider "azapi" {}
 
-
 ## Section to provide a random Azure region for the resource group
 # This allows us to randomize the region for the resource group.
 locals {
@@ -47,6 +46,7 @@ locals {
     "japaneast",
   ]
 }
+
 # This allows us to randomize the region for the resource group.
 resource "random_integer" "region_index" {
   max = length(local.locations) - 1
