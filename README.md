@@ -263,11 +263,11 @@ Default: `{}`
 
 ### <a name="input_remote_debug_enabled"></a> [remote\_debug\_enabled](#input\_remote\_debug\_enabled)
 
-Description: Enable Remote Debug on the App Service Environment (ASE).
+Description: Enable Remote Debug on the App Service Environment (ASE). Defaults to false.
 
 Type: `bool`
 
-Default: `null`
+Default: `false`
 
 ### <a name="input_retry"></a> [retry](#input\_retry)
 
