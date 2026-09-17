@@ -176,7 +176,7 @@ module "test" {
       ]
     }
   }
-  enable_telemetry = var.enable_telemetry
+  enable_telemetry = false
   # Front-end configuration
   ftp_enabled                  = false
   inbound_ip_address_override  = "10.0.1.100"

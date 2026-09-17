@@ -153,7 +153,7 @@ module "test" {
   name             = module.naming.app_service_environment.name_unique
   parent_id        = azapi_resource.resource_group.id
   subnet_id        = azapi_resource.subnet.id
-  enable_telemetry = var.enable_telemetry
+  enable_telemetry = false
 }
 ```
 
