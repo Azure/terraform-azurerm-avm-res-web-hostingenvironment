@@ -1,0 +1,7 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/azure-verified-modules-tools/main/src/Avm.Authoring/Resources/Schemas/v1/avm-module-metadata.schema.json",
+  "moduleDisplayName": "Networking Configuration",
+  "moduleDescription": "This sub-module configures the networking settings for an App Service Environment (ASE) using the `Microsoft.Web/hostingEnvironments/configurations` API with the `networking` configuration name.",
+  "canonicalType": "Microsoft.Web/hostingEnvironments/configurations",
+  "telemetryIdPrefix": "46d3xtrf.res.698d986"
+}
