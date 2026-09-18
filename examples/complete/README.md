@@ -176,7 +176,7 @@ module "test" {
       ]
     }
   }
-  enable_telemetry = false
+  enable_telemetry = var.enable_telemetry
   # Front-end configuration
   ftp_enabled                  = false
   inbound_ip_address_override  = "10.0.1.100"
@@ -266,7 +266,7 @@ If it is set to false, then no telemetry will be collected.
 
 Type: `bool`
 
-Default: `true`
+Default: `false`
 
 ## Outputs
 
