@@ -1,0 +1,7 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/azure-verified-modules-tools/main/src/Avm.Authoring/Resources/Schemas/v1/avm-module-metadata.schema.json",
+  "moduleDisplayName": "Custom DNS Suffix Configuration",
+  "moduleDescription": "This sub-module configures a custom DNS suffix for an App Service Environment (ASE) using the `Microsoft.Web/hostingEnvironments/configurations` API with the `customdnssuffix` configuration name.",
+  "canonicalType": "Microsoft.Web/hostingEnvironments/configurations",
+  "telemetryIdPrefix": "46d3xtrf.res.1c1e7e9"
+}
