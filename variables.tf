@@ -232,7 +232,7 @@ variable "remote_debug_enabled" {
 
 variable "retry" {
   type = object({
-    error_message_regex  = optional(list(string), ["ScopeLocked"])
+    error_message_regex  = optional(list(string), ["ScopeLocked", "connection reset by peer"])
     interval_seconds     = optional(number, null)
     max_interval_seconds = optional(number, null)
   })
