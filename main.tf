@@ -166,6 +166,8 @@ module "custom_dns_suffix_configuration" {
   certificate_url                 = var.custom_dns_suffix_configuration.certificate_url
   dns_suffix                      = var.custom_dns_suffix_configuration.dns_suffix
   hosting_environment_resource_id = azapi_resource.this.id
+  location                        = var.location
+  enable_telemetry                = var.enable_telemetry
   key_vault_reference_identity    = var.custom_dns_suffix_configuration.key_vault_reference_identity
 
   depends_on = [azapi_resource.this]
@@ -177,7 +179,9 @@ module "networking_configuration" {
   source = "./modules/networking_configuration"
 
   hosting_environment_resource_id        = azapi_resource.this.id
+  location                               = var.location
   allow_new_private_endpoint_connections = var.allow_new_private_endpoint_connections
+  enable_telemetry                       = var.enable_telemetry
   ftp_enabled                            = var.ftp_enabled
   remote_debug_enabled                   = var.remote_debug_enabled
 
