@@ -139,9 +139,6 @@ data "azurerm_client_config" "current" {}
 # This is the module call with all available settings
 module "test" {
   source = "../../"
-  providers = {
-    azapi = azapi
-  }
 
   location  = azapi_resource.resource_group.location
   name      = module.naming.app_service_environment.name_unique
