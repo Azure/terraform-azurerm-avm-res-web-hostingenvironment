@@ -35,12 +35,6 @@ Description: The resource ID of the App Service Environment (ASE) to configure n
 
 Type: `string`
 
-### <a name="input_location"></a> [location](#input\_location)
-
-Description: The Azure region for this module's resources or telemetry deployment.
-
-Type: `string`
-
 ## Optional Inputs
 
 The following input variables are optional (have default values):
@@ -70,6 +64,14 @@ Description: Enable FTP on the App Service Environment (ASE). Defaults to false.
 Type: `bool`
 
 Default: `false`
+
+### <a name="input_location"></a> [location](#input\_location)
+
+Description: The Azure region for this module's resources or telemetry deployment.
+
+Type: `string`
+
+Default: `null`
 
 ### <a name="input_remote_debug_enabled"></a> [remote\_debug\_enabled](#input\_remote\_debug\_enabled)
 
