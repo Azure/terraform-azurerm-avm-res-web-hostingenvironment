@@ -16,12 +16,6 @@ variable "hosting_environment_resource_id" {
   nullable    = false
 }
 
-variable "location" {
-  type        = string
-  description = "The Azure region for this module's resources or telemetry deployment."
-  nullable    = false
-}
-
 variable "enable_telemetry" {
   type        = bool
   default     = true
@@ -37,4 +31,15 @@ variable "key_vault_reference_identity" {
   type        = string
   default     = null
   description = "The user-assigned identity to use for resolving the key vault certificate reference. If not specified, the system-assigned ASE identity will be used if available."
+}
+
+variable "location" {
+  type        = string
+  default     = null
+  description = "The Azure region for this module's resources or telemetry deployment."
+
+  validation {
+    condition     = !var.enable_telemetry || var.location != null
+    error_message = "The location must not be null when telemetry is enabled."
+  }
 }

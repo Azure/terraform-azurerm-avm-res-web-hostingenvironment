@@ -4,12 +4,6 @@ variable "hosting_environment_resource_id" {
   nullable    = false
 }
 
-variable "location" {
-  type        = string
-  description = "The Azure region for this module's resources or telemetry deployment."
-  nullable    = false
-}
-
 variable "allow_new_private_endpoint_connections" {
   type        = bool
   default     = true
@@ -31,6 +25,17 @@ variable "ftp_enabled" {
   type        = bool
   default     = false
   description = "Enable FTP on the App Service Environment (ASE). Defaults to false."
+}
+
+variable "location" {
+  type        = string
+  default     = null
+  description = "The Azure region for this module's resources or telemetry deployment."
+
+  validation {
+    condition     = !var.enable_telemetry || var.location != null
+    error_message = "The location must not be null when telemetry is enabled."
+  }
 }
 
 variable "remote_debug_enabled" {
