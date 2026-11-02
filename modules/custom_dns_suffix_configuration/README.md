@@ -47,12 +47,6 @@ Description: The resource ID of the App Service Environment (ASE) to configure t
 
 Type: `string`
 
-### <a name="input_location"></a> [location](#input\_location)
-
-Description: The Azure region for this module's resources or telemetry deployment.
-
-Type: `string`
-
 ## Optional Inputs
 
 The following input variables are optional (have default values):
@@ -70,6 +64,14 @@ Default: `true`
 ### <a name="input_key_vault_reference_identity"></a> [key\_vault\_reference\_identity](#input\_key\_vault\_reference\_identity)
 
 Description: The user-assigned identity to use for resolving the key vault certificate reference. If not specified, the system-assigned ASE identity will be used if available.
+
+Type: `string`
+
+Default: `null`
+
+### <a name="input_location"></a> [location](#input\_location)
+
+Description: The Azure region for this module's resources or telemetry deployment.
 
 Type: `string`
 
