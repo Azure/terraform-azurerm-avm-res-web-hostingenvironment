@@ -414,7 +414,7 @@ The following Modules are called:
 
 Source: Azure/avm-utl-interfaces/azure
 
-Version: 0.10.0
+Version: 0.10.1
 
 ### <a name="module_custom_dns_suffix_configuration"></a> [custom\_dns\_suffix\_configuration](#module\_custom\_dns\_suffix\_configuration)
 
